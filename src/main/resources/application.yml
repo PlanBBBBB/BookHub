@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/bookhub?serverTimezone=UTC
+      username: root
+      password: root
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    password:
+#spring:
+#  datasource:
+#    driver-class-name: oracle.jdbc.OracleDriver # 使用Oracle驱动
+#    url: jdbc:oracle:thin:@//192.168.101.132:1521/ORCLCDB # 替换为您的Oracle数据库连接信息
+#    username: C##PLANB # 替换为您的Oracle用户名
+#    password: 123456 # 替换为您的Oracle密码
+
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# mybatis 相关配置
+mybatis:
+  configuration-properties:
+    offsetAsPageNum: true
+    rowBoundsWithCount: true
+    reasonable: true
+  mapper-locations: mapper/*.xml
+
