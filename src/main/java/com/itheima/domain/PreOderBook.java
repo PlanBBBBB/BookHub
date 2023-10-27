@@ -7,16 +7,12 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-/**
- * 通知和提醒表
- */
 @Data
-@TableName("Notifications")
-public class Notification {
+@TableName("PreOderBook")
+public class PreOderBook {
     @TableId(type = IdType.AUTO)
-    private Integer notificationId;
+    private Integer recordId;
     private Integer userId;
-    private Enum notificationType;
-    private String notificationContent;
-    private LocalDateTime sentDate;
+    private Integer bookId;
+    private LocalDateTime bookingDate;
 }

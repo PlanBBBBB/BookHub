@@ -47,7 +47,6 @@ public class BookController {
      */
     @GetMapping("/{bookId}")
     public R booking(@PathVariable Integer bookId) {
-        //TODO 预订图书
         return new R(bookService.booking(bookId));
     }
 }

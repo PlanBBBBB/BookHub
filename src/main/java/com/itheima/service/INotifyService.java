@@ -4,6 +4,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.itheima.domain.Notification;
 
 public interface INotifyService extends IService<Notification> {
-    Boolean notice();
+
+    Boolean returnNotice();
+
+    Boolean overdueNotice();
+
+    Boolean bookingNotice();
 
 }

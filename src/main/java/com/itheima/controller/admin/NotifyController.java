@@ -17,14 +17,38 @@ public class NotifyController {
     private INotifyService notifyService;
 
     /**
-     * 通知
+     * 预订通知
      *
      * @return
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public R notice() {
+    public R bookingNotice() {
+        return new R(notifyService.bookingNotice());
+    }
+
+
+    /**
+     * 归还通知
+     *
+     * @return
+     */
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public R returnNotice() {
         //TODO 通知
-        return new R(notifyService.notice());
+        return new R(notifyService.returnNotice());
+    }
+
+
+    /**
+     * 逾期通知
+     *
+     * @return
+     */
+    @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public R overdueNotice() {
+        return new R(notifyService.overdueNotice());
     }
 }

@@ -8,10 +8,8 @@ import com.itheima.constant.CrudOperation;
 import com.itheima.dao.AdminActionMapper;
 import com.itheima.dao.BookMapper;
 import com.itheima.dao.BorrowBookMapper;
-import com.itheima.domain.AdminAction;
-import com.itheima.domain.Book;
-import com.itheima.domain.BorrowedBook;
-import com.itheima.domain.LoginUser;
+import com.itheima.dao.PreOderBookMapper;
+import com.itheima.domain.*;
 import com.itheima.service.IBookService;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.Authentication;
@@ -32,6 +30,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Resource
     private BorrowBookMapper borrowBookMapper;
+
+    @Resource
+    private PreOderBookMapper preOderBookMapper;
 
     @Override
     public boolean saveBook(Book book) {
@@ -88,6 +89,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         if (book.getStatus().equals("0")) {
             return false;
         }
+
+        // 添加借书记录
         LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(BorrowedBook::getBookId, bookId).eq(BorrowedBook::getUserId, getUserId());
         BorrowedBook borrowedBook = borrowBookMapper.selectOne(queryWrapper);
@@ -95,11 +98,22 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         borrowedBook.setBookId(bookId);
         borrowedBook.setUserId(getUserId());
         borrowBookMapper.updateById(borrowedBook);
+
+        // 更新图书库存，状态
         Integer stock = book.getStock();
         stock--;
         if (stock <= 0) book.setStatus("0");
         book.setStock(stock);
         bookMapper.updateById(book);
+
+        // 删除预约记录，如果有的话
+        LambdaQueryWrapper<PreOderBook> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PreOderBook::getBookId, bookId).eq(PreOderBook::getUserId, getUserId());
+        PreOderBook preOderBook = preOderBookMapper.selectOne(wrapper);
+        if (preOderBook != null) {
+            preOderBookMapper.deleteById(preOderBook.getRecordId());
+        }
+
         return true;
     }
 
@@ -121,8 +135,42 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Override
     public Boolean booking(Integer bookId) {
-        return null;
+        // 有库存，无需预约
+        Book book = bookMapper.selectById(bookId);
+        if (book.getStatus().equals("1")) {
+            return false;
+        }
 
+        // 已借阅，未归还
+        LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(BorrowedBook::getBookId, bookId).eq(BorrowedBook::getUserId, getUserId());
+        BorrowedBook borrowedBook = borrowBookMapper.selectOne(queryWrapper);
+        if (borrowedBook != null && borrowedBook.getReturnDate() == null) {
+            return false;
+        }
+
+        // 已经预订
+        LambdaQueryWrapper<PreOderBook> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PreOderBook::getBookId, bookId).eq(PreOderBook::getUserId, getUserId());
+        PreOderBook preOderBook = preOderBookMapper.selectOne(wrapper);
+        if (preOderBook != null) {
+            return false;
+        }
+
+        // 可以预订
+        // 1.预约人数加一
+        Integer reservationCount = book.getReservationCount();
+        reservationCount++;
+        book.setReservationCount(reservationCount);
+        bookMapper.updateById(book);
+        //添加预订记录
+        preOderBook = new PreOderBook();
+        preOderBook.setBookingDate(LocalDateTime.now());
+        preOderBook.setBookId(bookId);
+        preOderBook.setUserId(getUserId());
+        preOderBookMapper.insert(preOderBook);
+
+        return true;
     }
 
 }
