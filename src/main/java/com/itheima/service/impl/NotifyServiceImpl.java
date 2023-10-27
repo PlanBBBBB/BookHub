@@ -40,7 +40,7 @@ public class NotifyServiceImpl extends ServiceImpl<NotifyMapper, Notification> i
                 String emailTitle = EmailTitle.BOOKING_TITLE;
                 sendEmail(email, NotificationMessages.BOOKING_MESSAGE, emailTitle, bookId);
                 Notification notification = new Notification();
-                notification.setNotificationType(TransactionStatus.BOOKING);
+                notification.setNotificationType(String.valueOf(TransactionStatus.BOOKING));
                 notification.setSentDate(LocalDateTime.now());
                 notification.setUserId(preOderBook.getUserId());
                 notification.setNotificationContent(NotificationMessages.BOOKING_MESSAGE);
@@ -66,7 +66,7 @@ public class NotifyServiceImpl extends ServiceImpl<NotifyMapper, Notification> i
     public Boolean overdueNotice() {
         LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.isNull(BorrowedBook::getReturnDate)
-                .ge(BorrowedBook::getBorrowDate, LocalDateTime.now().minusDays(30));
+                .lt(BorrowedBook::getBorrowDate, LocalDateTime.now().minusDays(30));
         List<BorrowedBook> borrowedBooks = borrowBookMapper.selectList(queryWrapper);
         return sendNotification(borrowedBooks, NotificationMessages.OVERDUE_MESSAGE, TransactionStatus.OVERDUE);
     }
@@ -84,7 +84,7 @@ public class NotifyServiceImpl extends ServiceImpl<NotifyMapper, Notification> i
             sendEmail(user.getEmail(), message, emailTitle, borrowedBook.getBookId());
 
             Notification notification = new Notification();
-            notification.setNotificationType(transactionStatus);
+            notification.setNotificationType(String.valueOf(transactionStatus));
             notification.setSentDate(LocalDateTime.now());
             notification.setUserId(userId);
             notification.setNotificationContent(message);

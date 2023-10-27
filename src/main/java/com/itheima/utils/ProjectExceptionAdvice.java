@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ProjectExceptionAdvice {
     //拦截所有的异常信息
     @ExceptionHandler(Exception.class)
-    public R doException(Exception ex){
+    public Result doException(Exception ex) {
         //记录日志
         //通知运维
         //通知开发
         ex.printStackTrace();
-        return new R("出错了，请检查后再试！");
+        return Result.fail("出错了，请检查后再试！");
     }
 }

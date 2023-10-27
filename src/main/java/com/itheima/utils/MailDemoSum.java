@@ -1,30 +1,11 @@
 package com.itheima.utils;
 
-//import com.sun.mail.util.MailSSLSocketFactory;
-
-import com.sun.mail.util.MailSSLSocketFactory;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import java.util.Properties;
 
-/**
- * 作者：沈公子
- * 日期：2022/7/15 - 18:04
- * 作用：发送邮件
- * 需求：文本，图片，附件(文本，图片，视频，音乐)与拼接发送
- * setContent();    文本
- * setContentID();  图片
- * setFileName();   附件
- * 使用的路径是本项目的 resources 目录
- */
 public class MailDemoSum {
-
     public static void sendEmail(String recipientEmail, String subject, String content) throws Exception {
         final String from = "planbbbbb@qq.com"; // 你的QQ邮箱
         final String username = "PlanB"; // 你的QQ邮箱用户名

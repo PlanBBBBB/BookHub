@@ -1,7 +1,7 @@
 package com.itheima.controller.admin;
 
 import com.itheima.service.IUserService;
-import com.itheima.utils.R;
+import com.itheima.utils.Result;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/admin/user")
-public class UserController {
+public class AdminController {
 
     @Resource
     private IUserService userService;
@@ -25,8 +25,8 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public R authorize(@PathVariable("userId") Integer userId) {
+    public Result authorize(@PathVariable("userId") Integer userId) {
         userService.authorize(userId);
-        return new R(true, "授权成功");
+        return Result.ok("授权成功");
     }
 }

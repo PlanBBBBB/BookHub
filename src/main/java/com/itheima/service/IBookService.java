@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.github.pagehelper.Page;
 import com.itheima.domain.Book;
+import com.itheima.utils.Result;
+import com.itheima.vo.UserPageVo;
 
 import java.util.List;
 
@@ -17,12 +19,14 @@ public interface IBookService extends IService<Book> {
 
     boolean delete(Integer id);
 
-    IPage<Book> getPage(int currentPage, int pageSize, Book book);
+    IPage<Book> getAdminPage(int currentPage, int pageSize, Book book);
 
-    boolean borrow(Integer bookId);
+    Result borrow(Integer bookId);
 
-    boolean restore(Integer bookId);
+    Result restore(Integer bookId);
 
-    Boolean booking(Integer bookId);
+    Result booking(Integer bookId);
+
+    IPage<UserPageVo> getUserPage(int currentPage, int pageSize, Book book);
 
 }

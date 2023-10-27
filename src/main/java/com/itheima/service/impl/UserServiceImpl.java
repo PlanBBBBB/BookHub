@@ -8,6 +8,8 @@ import com.itheima.domain.LoginUser;
 import com.itheima.domain.User;
 import com.itheima.service.IUserService;
 import com.itheima.utils.JwtUtil;
+import com.itheima.utils.Result;
+import com.itheima.vo.UserUpdateVo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,16 +38,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private AuthenticationManager authenticationManager;
 
     @Override
-    public boolean register(User user) {
+    public Result register(User user) {
         if (user == null || user.getUsername() == null || user.getPassword() == null) {
-            return false;
+            return Result.fail("用户名或密码为空");
         }
         //判断用户名是否存在
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, user.getUsername());
         User u = this.getOne(wrapper);
         if (u != null) {
-            return false;
+            return Result.fail("用户已存在，不可重复注册");
         }
         String password = user.getPassword();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -54,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setRole("USER");
         //注册
         this.save(user);
-        return true;
+        return Result.ok("注册成功");
     }
 
     @Override
@@ -118,7 +120,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public void update(User user) {
+    public void update(UserUpdateVo userUpdateVo) {
+        User user = getById(getUserId());
+        if (userUpdateVo.getPassword() != null) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            String password = bCryptPasswordEncoder.encode(userUpdateVo.getPassword());
+            user.setPassword(password);
+        }
+        if (userUpdateVo.getUsername() != null) {
+            user.setUsername(userUpdateVo.getUsername());
+        }
+        if (userUpdateVo.getName() != null) {
+            user.setName(userUpdateVo.getName());
+        }
+        if (userUpdateVo.getEmail() != null) {
+            user.setEmail(userUpdateVo.getEmail());
+        }
         updateById(user);
+    }
+
+    private Integer getUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        return loginUser.getUser().getUserId();
     }
 }

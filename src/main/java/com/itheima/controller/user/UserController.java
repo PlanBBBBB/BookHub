@@ -2,7 +2,8 @@ package com.itheima.controller.user;
 
 import com.itheima.domain.User;
 import com.itheima.service.IUserService;
-import com.itheima.utils.R;
+import com.itheima.utils.Result;
+import com.itheima.vo.UserUpdateVo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,9 +21,9 @@ public class UserController {
      * @return
      */
     @GetMapping("/check")
-    public R check() {
+    public Result check() {
         User user = userService.check();
-        return new R(true, user);
+        return Result.ok(user);
     }
 
     /**
@@ -32,10 +33,9 @@ public class UserController {
      * @return
      */
     @PostMapping
-    public R update(@RequestBody User user) {
+    public Result update(@RequestBody UserUpdateVo user) {
         userService.update(user);
-        return new R(true);
+        return Result.ok("修改个人信息成功");
     }
-
 
 }

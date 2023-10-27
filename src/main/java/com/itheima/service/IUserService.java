@@ -2,9 +2,11 @@ package com.itheima.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.itheima.domain.User;
+import com.itheima.utils.Result;
+import com.itheima.vo.UserUpdateVo;
 
 public interface IUserService extends IService<User> {
-    boolean register(User user);
+    Result register(User user);
 
     void authorize(Integer userId);
 
@@ -14,6 +16,6 @@ public interface IUserService extends IService<User> {
 
     User check();
 
-    void update(User user);
+    void update(UserUpdateVo user);
 
 }

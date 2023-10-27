@@ -1,11 +1,9 @@
 package com.itheima.controller.admin;
 
 import com.itheima.service.INotifyService;
-import com.itheima.utils.R;
+import com.itheima.utils.Result;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,8 +21,10 @@ public class NotifyController {
      */
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public R bookingNotice() {
-        return new R(notifyService.bookingNotice());
+    public Result bookingNotice() {
+        Boolean flag = notifyService.bookingNotice();
+        if (flag) return Result.ok("发送预订通知成功");
+        else return Result.fail("发送预订通知失败");
     }
 
 
@@ -33,10 +33,12 @@ public class NotifyController {
      *
      * @return
      */
-    @GetMapping
+    @PutMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public R returnNotice() {
-        return new R(notifyService.returnNotice());
+    public Result returnNotice() {
+        Boolean flag = notifyService.returnNotice();
+        if (flag) return Result.ok("发送归还通知成功");
+        else return Result.fail("发送归还通知失败");
     }
 
 
@@ -45,9 +47,11 @@ public class NotifyController {
      *
      * @return
      */
-    @GetMapping
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public R overdueNotice() {
-        return new R(notifyService.overdueNotice());
+    public Result overdueNotice() {
+        Boolean flag = notifyService.overdueNotice();
+        if (flag) return Result.ok("发送逾期通知成功");
+        else return Result.fail("发送逾期通知失败");
     }
 }
