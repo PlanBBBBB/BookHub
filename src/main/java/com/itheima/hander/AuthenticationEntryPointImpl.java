@@ -1,5 +1,7 @@
 package com.itheima.hander;
 
+import cn.hutool.json.JSONUtil;
+import com.itheima.utils.R;
 import com.itheima.utils.WebUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -14,6 +16,8 @@ import java.io.IOException;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        WebUtils.renderString(response, "认证失败请重新登录");
+        R r = new R("认证失败请重新登录");
+        String jsonStr = JSONUtil.toJsonStr(r);
+        WebUtils.renderString(response, jsonStr);
     }
 }

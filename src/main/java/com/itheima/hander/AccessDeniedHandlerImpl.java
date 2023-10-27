@@ -1,5 +1,7 @@
 package com.itheima.hander;
 
+import cn.hutool.json.JSONUtil;
+import com.itheima.utils.R;
 import com.itheima.utils.WebUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -14,6 +16,8 @@ import java.io.IOException;
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        WebUtils.renderString(response, "权限不足");
+        R r = new R("权限不足");
+        String jsonStr = JSONUtil.toJsonStr(r);
+        WebUtils.renderString(response, jsonStr);
     }
 }

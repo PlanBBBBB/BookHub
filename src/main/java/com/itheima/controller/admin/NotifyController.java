@@ -36,7 +36,6 @@ public class NotifyController {
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public R returnNotice() {
-        //TODO 通知
         return new R(notifyService.returnNotice());
     }
 
