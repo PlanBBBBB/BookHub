@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -188,7 +187,6 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
             return Result.fail("已借阅，请先归还图书");
         }
 
-        log.info("++++++++++++++++++++++++++++++++++++++++++++++");
         // 已经预订
         LambdaQueryWrapper<PreOderBook> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PreOderBook::getBookId, bookId).eq(PreOderBook::getUserId, getUserId());
@@ -197,16 +195,12 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
             return Result.fail("已预订，请勿重复预订");
         }
 
-        log.info("--------------------------------------------");
-
         // 可以预订
         // 1.预约人数加一
         Integer reservationCount = book.getReservationCount();
         reservationCount++;
         book.setReservationCount(reservationCount);
         bookMapper.updateById(book);
-
-        log.info("1111111111111111111111111111111111");
 
         //添加预订记录
         preOderBook = new PreOderBook();
