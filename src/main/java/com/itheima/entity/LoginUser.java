@@ -1,4 +1,4 @@
-package com.itheima.domain;
+package com.itheima.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;

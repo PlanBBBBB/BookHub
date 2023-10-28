@@ -1,16 +1,18 @@
 package com.itheima.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.itheima.domain.User;
+import com.itheima.entity.User;
 import com.itheima.utils.Result;
+import com.itheima.vo.UserLoginVo;
+import com.itheima.vo.UserRegisterVo;
 import com.itheima.vo.UserUpdateVo;
 
 public interface IUserService extends IService<User> {
-    Result register(User user);
+    Result register(UserRegisterVo userRegisterVo);
 
     void authorize(Integer userId);
 
-    String login(User user);
+    String login(UserLoginVo userLoginVo);
 
     void logout();
 

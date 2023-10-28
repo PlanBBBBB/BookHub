@@ -1,41 +1,38 @@
-package com.itheima.controller.user;
+package com.itheima.controller.common;
 
-import com.itheima.domain.User;
+import com.itheima.constant.UserConstants;
+import com.itheima.entity.User;
 import com.itheima.service.IUserService;
 import com.itheima.utils.Result;
 import com.itheima.vo.UserUpdateVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+@Api(tags = "用户信息模块相关接口")
+public class UserDataController {
 
     @Resource
     private IUserService userService;
 
-    /**
-     * 查看个人资料
-     *
-     * @return
-     */
+
     @GetMapping("/check")
+    @ApiOperation("查看个人资料")
     public Result check() {
         User user = userService.check();
         return Result.ok(user);
     }
 
-    /**
-     * 修改个人资料
-     *
-     * @param user
-     * @return
-     */
+
     @PostMapping
+    @ApiOperation("修改个人资料")
     public Result update(@RequestBody UserUpdateVo user) {
         userService.update(user);
-        return Result.ok("修改个人信息成功");
+        return Result.ok(UserConstants.UPDATE_PROFILE_SUCCESS);
     }
 
 }

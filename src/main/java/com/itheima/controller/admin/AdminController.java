@@ -1,7 +1,10 @@
 package com.itheima.controller.admin;
 
+import com.itheima.constant.UserConstants;
 import com.itheima.service.IUserService;
 import com.itheima.utils.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,21 +15,17 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("/admin/user")
+@Api(tags = "用户管理相关接口")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     @Resource
     private IUserService userService;
 
-    /**
-     * 给用户授予管理员权限
-     *
-     * @param userId
-     * @return
-     */
     @GetMapping("/{userId}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @ApiOperation("授予管理员权限")
     public Result authorize(@PathVariable("userId") Integer userId) {
         userService.authorize(userId);
-        return Result.ok("授权成功");
+        return Result.ok(UserConstants.AUTH_SUCCESS);
     }
 }

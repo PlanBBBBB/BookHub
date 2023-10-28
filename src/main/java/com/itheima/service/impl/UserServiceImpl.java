@@ -3,12 +3,15 @@ package com.itheima.service.impl;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.constant.UserConstants;
 import com.itheima.dao.UserMapper;
-import com.itheima.domain.LoginUser;
-import com.itheima.domain.User;
+import com.itheima.entity.LoginUser;
+import com.itheima.entity.User;
 import com.itheima.service.IUserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Result;
+import com.itheima.vo.UserLoginVo;
+import com.itheima.vo.UserRegisterVo;
 import com.itheima.vo.UserUpdateVo;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,52 +40,56 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private AuthenticationManager authenticationManager;
 
     @Override
-    public Result register(User user) {
-        if (user == null || user.getUsername() == null || user.getPassword() == null) {
-            return Result.fail("用户名或密码为空");
+    public Result register(UserRegisterVo userRegisterVo) {
+        if (userRegisterVo == null || userRegisterVo.getUsername() == null || userRegisterVo.getPassword() == null) {
+            return Result.fail(UserConstants.USERNAME_OR_PASSWORD_EMPTY);
         }
         //判断用户名是否存在
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getUsername, user.getUsername());
+        wrapper.eq(User::getUsername, userRegisterVo.getUsername());
         User u = this.getOne(wrapper);
         if (u != null) {
-            return Result.fail("用户已存在，不可重复注册");
+            return Result.fail(UserConstants.USER_ALREADY_EXISTS);
         }
-        String password = user.getPassword();
+        User user = new User();
+        String password = userRegisterVo.getPassword();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         password = passwordEncoder.encode(password);
+        user.setName(userRegisterVo.getName());
+        user.setUsername(userRegisterVo.getUsername());
         user.setPassword(password);
-        user.setRole("USER");
+        user.setRole(UserConstants.ROLE_USER);
+        user.setEmail(userRegisterVo.getEmail());
         //注册
         this.save(user);
-        return Result.ok("注册成功");
+        return Result.ok(UserConstants.REGISTRATION_SUCCESS);
     }
 
     @Override
     public void authorize(Integer userId) {
         User user = this.getById(userId);
-        user.setRole("ADMIN");
+        user.setRole(UserConstants.ROLE_ADMIN);
         this.updateById(user);
     }
 
     @Override
-    public String login(User user) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+    public String login(UserLoginVo userLoginVo) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userLoginVo.getUsername(), userLoginVo.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (Objects.isNull(authenticate)) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new RuntimeException(UserConstants.INVALID_USERNAME_OR_PASSWORD);
         }
         //使用userid生成token
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
-        user = loginUser.getUser();
+        User user = loginUser.getUser();
         String userId = String.valueOf(user.getUserId());
         String token = JwtUtil.createJWT(userId);
 
         String loginUserJson = JSONUtil.toJsonStr(loginUser);
         //authenticate存入redis
-        String key = "login:" + userId;
+        String key = UserConstants.LOGIN_PREFIX + userId;
         stringRedisTemplate.opsForValue().set(key, loginUserJson);
-        stringRedisTemplate.expire(key, 30, TimeUnit.MINUTES);
+        stringRedisTemplate.expire(key, UserConstants.TIME_OUT, TimeUnit.MINUTES);
         //把token响应给前端
         return token;
     }
@@ -93,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         queryWrapper.eq(User::getUsername, username);
         User user = getOne(queryWrapper);
         if (user == null) {
-            throw new RuntimeException("出错了");
+            throw new RuntimeException(UserConstants.USER_NOT_FOUND);
         }
         // 根据用户查询权限信息 添加到LoginUser中
         String role = user.getRole();
@@ -108,7 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         Long userId = Long.valueOf(loginUser.getUser().getUserId());
-        stringRedisTemplate.delete("login:" + userId);
+        stringRedisTemplate.delete(UserConstants.LOGIN_PREFIX + userId);
     }
 
     @Override
@@ -121,18 +128,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public void update(UserUpdateVo userUpdateVo) {
         User user = getById(getUserId());
-        if (userUpdateVo.getPassword() != null) {
+        if (userUpdateVo.getPassword() != null && !userUpdateVo.getPassword().isEmpty()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             String password = bCryptPasswordEncoder.encode(userUpdateVo.getPassword());
             user.setPassword(password);
         }
-        if (userUpdateVo.getUsername() != null) {
-            user.setUsername(userUpdateVo.getUsername());
-        }
-        if (userUpdateVo.getName() != null) {
+        if (userUpdateVo.getName() != null && !userUpdateVo.getName().isEmpty()) {
             user.setName(userUpdateVo.getName());
         }
-        if (userUpdateVo.getEmail() != null) {
+        if (userUpdateVo.getEmail() != null && !userUpdateVo.getEmail().isEmpty()) {
             user.setEmail(userUpdateVo.getEmail());
         }
         updateById(user);

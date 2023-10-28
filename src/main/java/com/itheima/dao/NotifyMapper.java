@@ -1,7 +1,7 @@
 package com.itheima.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.itheima.domain.Notification;
+import com.itheima.entity.Notification;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

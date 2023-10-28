@@ -6,7 +6,7 @@ import com.itheima.constant.EmailTitle;
 import com.itheima.constant.NotificationMessages;
 import com.itheima.constant.TransactionStatus;
 import com.itheima.dao.*;
-import com.itheima.domain.*;
+import com.itheima.entity.*;
 import com.itheima.service.INotifyService;
 import com.itheima.utils.MailDemoSum;
 import org.springframework.stereotype.Service;
@@ -31,18 +31,18 @@ public class NotifyServiceImpl extends ServiceImpl<NotifyMapper, Notification> i
 
     @Override
     public Boolean bookingNotice() {
-        List<PreOderBook> preOderBooks = preOderBookMapper.selectList(null);
-        for (PreOderBook preOderBook : preOderBooks) {
-            Integer bookId = preOderBook.getBookId();
+        List<PreOrderBook> preOrderBooks = preOderBookMapper.selectList(null);
+        for (PreOrderBook preOrderBook : preOrderBooks) {
+            Integer bookId = preOrderBook.getBookId();
             Book book = bookMapper.selectById(bookId);
             if (book.getStatus().equals("1")) {
-                String email = userMapper.selectById(preOderBook.getUserId()).getEmail();
+                String email = userMapper.selectById(preOrderBook.getUserId()).getEmail();
                 String emailTitle = EmailTitle.BOOKING_TITLE;
                 sendEmail(email, NotificationMessages.BOOKING_MESSAGE, emailTitle, bookId);
                 Notification notification = new Notification();
                 notification.setNotificationType(String.valueOf(TransactionStatus.BOOKING));
                 notification.setSentDate(LocalDateTime.now());
-                notification.setUserId(preOderBook.getUserId());
+                notification.setUserId(preOrderBook.getUserId());
                 notification.setNotificationContent(NotificationMessages.BOOKING_MESSAGE);
                 notifyMapper.insert(notification);
             }
