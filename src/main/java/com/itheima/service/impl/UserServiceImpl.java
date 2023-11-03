@@ -127,19 +127,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public void update(UserUpdateVo userUpdateVo) {
+        String key = UserConstants.LOGIN_PREFIX + getUserId();
+        String loginUserJson = stringRedisTemplate.opsForValue().get(key);
+        LoginUser loginUser = JSONUtil.toBean(loginUserJson, LoginUser.class);
+        User loginUserUser = loginUser.getUser();
         User user = getById(getUserId());
         if (userUpdateVo.getPassword() != null && !userUpdateVo.getPassword().isEmpty()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             String password = bCryptPasswordEncoder.encode(userUpdateVo.getPassword());
             user.setPassword(password);
+            loginUserUser.setPassword(password);
         }
         if (userUpdateVo.getName() != null && !userUpdateVo.getName().isEmpty()) {
             user.setName(userUpdateVo.getName());
+            loginUserUser.setName(userUpdateVo.getName());
         }
         if (userUpdateVo.getEmail() != null && !userUpdateVo.getEmail().isEmpty()) {
             user.setEmail(userUpdateVo.getEmail());
+            loginUserUser.setEmail(userUpdateVo.getEmail());
         }
         updateById(user);
+        loginUser.setUser(loginUserUser);
+        String jsonStr = JSONUtil.toJsonStr(loginUser);
+        stringRedisTemplate.opsForValue().set(key, jsonStr);
     }
 
     private Integer getUserId() {

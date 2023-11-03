@@ -2,6 +2,7 @@ package com.itheima.filter;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+import com.itheima.constant.UserConstants;
 import com.itheima.entity.LoginUser;
 import com.itheima.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -44,7 +45,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("token非法");
         }
         //从redis中获取用户信息
-        String redisKey = "login:" + userid;
+        String redisKey = UserConstants.LOGIN_PREFIX + userid;
         String loginUserJson = stringRedisTemplate.opsForValue().get(redisKey);
         if (StrUtil.isBlank(loginUserJson)) {
             throw new RuntimeException("用户未登录");
