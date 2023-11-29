@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -37,6 +38,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
 
     /**
      * 扩展mvc框架的消息转换器
+     *
      * @param converters
      */
     @Override
@@ -47,7 +49,7 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         //设置对象转换器，底层使用Jackson将Java对象转为json
         messageConverter.setObjectMapper(new JacksonObjectMapper());
         //将上面的消息转换器对象追加到mvc框架的转换器集合中
-        converters.add(0,messageConverter);
+        converters.add(0, messageConverter);
     }
 
     @Bean
@@ -67,5 +69,22 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
                 .version("1.0")
                 .description("BookHub接口文档")
                 .build();
+    }
+
+    @Override
+    protected void addCorsMappings(CorsRegistry registry) {
+        log.info("CORS configuration is being applied.");
+        // 设置允许跨域的路径
+        registry.addMapping("/**")
+                // 设置允许跨域请求的域名
+                .allowedOrigins("*")
+                // 是否允许携带 cookie
+                .allowCredentials(true)
+                // 设置允许的请求方式
+                .allowedMethods("GET", "POST", "DELETE", "PUT")
+                // 设置允许的 header 属性
+                .allowedHeaders("*")
+                // 跨域允许时间
+                .maxAge(3600);
     }
 }

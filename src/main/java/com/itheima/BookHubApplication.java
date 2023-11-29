@@ -10,7 +10,7 @@ public class BookHubApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BookHubApplication.class, args);
-        log.info("项目启动成功.......");
+        log.info("BookHub项目启动成功.......");
     }
 
 }

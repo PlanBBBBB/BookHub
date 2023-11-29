@@ -29,3 +29,5 @@ mybatis:
     reasonable: true
   mapper-locations: mapper/*.xml
 
+BookHub:
+  path: D:\BookHub\img\
