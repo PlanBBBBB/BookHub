@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.constant.UserConstants;
 import com.itheima.dao.UserMapper;
-import com.itheima.entity.LoginUser;
+import com.itheima.security.LoginUser;
 import com.itheima.entity.User;
 import com.itheima.service.IUserService;
 import com.itheima.utils.JwtUtil;

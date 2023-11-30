@@ -3,7 +3,7 @@ package com.itheima.filter;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.itheima.constant.UserConstants;
-import com.itheima.entity.LoginUser;
+import com.itheima.security.LoginUser;
 import com.itheima.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.data.redis.core.StringRedisTemplate;

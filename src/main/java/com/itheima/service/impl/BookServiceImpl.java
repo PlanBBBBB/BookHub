@@ -12,6 +12,7 @@ import com.itheima.dao.BookMapper;
 import com.itheima.dao.BorrowBookMapper;
 import com.itheima.dao.PreOderBookMapper;
 import com.itheima.entity.*;
+import com.itheima.security.LoginUser;
 import com.itheima.service.IBookService;
 import com.itheima.utils.Result;
 import com.itheima.dto.UserPageDto;
