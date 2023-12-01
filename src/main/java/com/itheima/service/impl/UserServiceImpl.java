@@ -146,6 +146,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             user.setEmail(userUpdateVo.getEmail());
             loginUserUser.setEmail(userUpdateVo.getEmail());
         }
+        if (userUpdateVo.getAvatar() != null && !userUpdateVo.getAvatar().isEmpty()) {
+            user.setAvatar(userUpdateVo.getAvatar());
+            loginUserUser.setAvatar(userUpdateVo.getAvatar());
+        }
         updateById(user);
         loginUser.setUser(loginUserUser);
         String jsonStr = JSONUtil.toJsonStr(loginUser);

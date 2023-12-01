@@ -29,6 +29,9 @@ public class User {
     @ApiModelProperty("邮箱")
     private String email;
 
+    @ApiModelProperty("头像")
+    private String avatar;
+
     @ApiModelProperty("角色")
     private String role;
 }

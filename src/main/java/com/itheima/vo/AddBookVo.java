@@ -11,4 +11,5 @@ public class AddBookVo {
     private LocalDateTime publicationDate;
     private Integer stock;
     private String title;
+    private String image;
 }

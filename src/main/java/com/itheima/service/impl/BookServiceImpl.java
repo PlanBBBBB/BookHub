@@ -55,6 +55,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         book.setStock(addBookVo.getStock());
         book.setReservationCount(0);
         book.setStatus("1");
+        book.setImage(addBookVo.getImage());
         book.setIsDeleted("1");
         int i = bookMapper.insert(book);
         adminAction(book.getBookId(), CrudOperation.INSERT);

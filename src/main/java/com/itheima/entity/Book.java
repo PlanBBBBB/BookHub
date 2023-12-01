@@ -44,6 +44,9 @@ public class Book {
     @ApiModelProperty("库存")
     private Integer stock;
 
+    @ApiModelProperty("图书图片")
+    private String image;
+
     @ApiModelProperty("是否已删除")
     private String isDeleted;
 }
