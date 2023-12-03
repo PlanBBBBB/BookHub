@@ -11,7 +11,7 @@
  Target Server Version : 80100 (8.1.0)
  File Encoding         : 65001
 
- Date: 28/10/2023 22:37:19
+ Date: 03/12/2023 11:42:42
 */
 
 SET NAMES utf8mb4;
@@ -73,6 +73,7 @@ CREATE TABLE `book`  (
   `status` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '状态：有库存1，无库存0',
   `stock` int NULL DEFAULT NULL COMMENT '库存',
   `reservation_count` int NULL DEFAULT 0 COMMENT '预定数量',
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图书图片',
   `is_deleted` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '逻辑删除：未删除1，删除0',
   PRIMARY KEY (`book_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
@@ -80,19 +81,19 @@ CREATE TABLE `book`  (
 -- ----------------------------
 -- Records of book
 -- ----------------------------
-INSERT INTO `book` VALUES (1, 'Java课程设计', '黑马程序员', '724839579023', '2023-10-27', '1', 10, 0, '1');
-INSERT INTO `book` VALUES (2, 'Java课程设计Ⅱ', '牛马程序员', '74895790237450', '2023-10-27', '1', 10, 1, '1');
-INSERT INTO `book` VALUES (3, 'Oracle进阶', '动力节点', '4508023949089034580-', '1979-09-30', '1', 34, 456, '1');
-INSERT INTO `book` VALUES (4, 'mybatisplus从入门到入土', '尚硅谷', '450802394580-', '1979-09-11', '1', 30, 123, '1');
-INSERT INTO `book` VALUES (5, 'Python入门到起飞', '黑马程序员', '123783489347895', '2023-10-27', '1', 10, 0, '0');
-INSERT INTO `book` VALUES (6, '计算机组成原理', 'bbb', '238945971945792347', '2023-10-27', '1', 10, 0, '0');
-INSERT INTO `book` VALUES (7, 'Python入门到入土', '黑马程序员', '75932477934873294', '2023-10-27', '1', 10, 0, '1');
-INSERT INTO `book` VALUES (8, '算法导论', 'ccc', '48921739047124', '2023-10-27', '1', 8, 4, '0');
-INSERT INTO `book` VALUES (9, '网络是怎样连接的', '新华出版社', '75932475973294', '2023-10-27', '1', 10, 0, '1');
-INSERT INTO `book` VALUES (10, 'C++primer', 'GDUFE', '75932475973294', '2023-10-27', '1', 10, 1, '1');
-INSERT INTO `book` VALUES (11, '深入理解Java虚拟机', 'aaa', '503840589204238', '2023-09-09', '1', 10, 0, '1');
-INSERT INTO `book` VALUES (12, '深入理解Java虚拟机Ⅱ', 'aaa', '503840589204238', '2023-09-09', '1', 10, 0, '1');
-INSERT INTO `book` VALUES (13, 'Java并发编程的艺术', 'bbb', '503840589204238', '2023-09-09', '1', 10, 0, '1');
+INSERT INTO `book` VALUES (1, 'Java课程设计', '黑马程序员', '724839579023', '2023-10-27', '1', 10, 0, NULL, '1');
+INSERT INTO `book` VALUES (2, 'Java课程设计Ⅱ', '牛马程序员', '74895790237450', '2023-10-27', '1', 10, 1, NULL, '1');
+INSERT INTO `book` VALUES (3, 'Oracle进阶', '动力节点', '4508023949089034580-', '1979-09-30', '1', 34, 456, NULL, '1');
+INSERT INTO `book` VALUES (4, 'mybatisplus从入门到入土', '尚硅谷', '450802394580-', '1979-09-11', '1', 30, 123, NULL, '1');
+INSERT INTO `book` VALUES (5, 'Python入门到起飞', '黑马程序员', '123783489347895', '2023-10-27', '1', 10, 0, NULL, '0');
+INSERT INTO `book` VALUES (6, '计算机组成原理', 'bbb', '238945971945792347', '2023-10-27', '1', 10, 0, NULL, '0');
+INSERT INTO `book` VALUES (7, 'Python入门到入土', '黑马程序员', '75932477934873294', '2023-10-27', '1', 10, 0, NULL, '1');
+INSERT INTO `book` VALUES (8, '算法导论', 'ccc', '48921739047124', '2023-10-27', '1', 8, 4, NULL, '0');
+INSERT INTO `book` VALUES (9, '网络是怎样连接的', '新华出版社', '75932475973294', '2023-10-27', '1', 10, 0, NULL, '1');
+INSERT INTO `book` VALUES (10, 'C++primer', 'GDUFE', '75932475973294', '2023-10-27', '1', 10, 1, NULL, '1');
+INSERT INTO `book` VALUES (11, '深入理解Java虚拟机', 'aaa', '503840589204238', '2023-09-09', '1', 10, 0, NULL, '1');
+INSERT INTO `book` VALUES (12, '深入理解Java虚拟机Ⅱ', 'aaa', '503840589204238', '2023-09-09', '1', 10, 0, NULL, '1');
+INSERT INTO `book` VALUES (13, 'Java并发编程的艺术', 'bbb', '503840589204238', '2023-09-09', '1', 10, 0, NULL, '1');
 
 -- ----------------------------
 -- Table structure for borrowedbook
@@ -150,7 +151,7 @@ CREATE TABLE `preorderbook`  (
   `book_id` int NOT NULL COMMENT '图书id',
   `booking_date` datetime NOT NULL COMMENT '预订时间',
   PRIMARY KEY (`record_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of preorderbook
@@ -166,6 +167,7 @@ CREATE TABLE `user`  (
   `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '密码',
   `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '姓名',
   `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '头像',
   `role` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '权限',
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
@@ -173,9 +175,9 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (1, 'PlanB', '$2a$10$yUPSooryTpThUJtqDH5TeO2ShJR3bOlqi8magQoolpC2UiguoS/Ae', '潘常浩', 'planbbbbb@qq.com', 'ADMIN');
-INSERT INTO `user` VALUES (2, 'PlanC', '$2a$10$yUPSooryTpThUJtqDH5TeO2ShJR3bOlqi8magQoolpC2UiguoS/Ae', '邱楷彬', '2625989772@qq.com', 'USER');
-INSERT INTO `user` VALUES (3, 'pucci', '$2a$10$27zX1KtNpJeYD02v8.1Z8uYOSQszGKOEqIAhLXdM9XA4oShvYKYnO', '潘启浩', '1985753103@qq.com', 'USER');
-INSERT INTO `user` VALUES (4, 'winghau', '$2a$10$Ak1rJ3rySy3qUe6te6IESeBYE/o2GRQUi02bssEkgKAUvMVa3ofFK', '缪永恒', '1239406018@qq.com', 'USER');
+INSERT INTO `user` VALUES (1, 'PlanB', '$2a$10$yUPSooryTpThUJtqDH5TeO2ShJR3bOlqi8magQoolpC2UiguoS/Ae', '潘常浩', 'planbbbbb@qq.com', 'a94f73e6-616b-4b4a-8373-d8c318fa722d.png', 'ADMIN');
+INSERT INTO `user` VALUES (2, 'PlanC', '$2a$10$yUPSooryTpThUJtqDH5TeO2ShJR3bOlqi8magQoolpC2UiguoS/Ae', '邱楷彬', '2625989772@qq.com', NULL, 'USER');
+INSERT INTO `user` VALUES (3, 'pucci', '$2a$10$27zX1KtNpJeYD02v8.1Z8uYOSQszGKOEqIAhLXdM9XA4oShvYKYnO', '潘启浩', '1985753103@qq.com', NULL, 'USER');
+INSERT INTO `user` VALUES (4, 'winghau', '$2a$10$Ak1rJ3rySy3qUe6te6IESeBYE/o2GRQUi02bssEkgKAUvMVa3ofFK', '缪永恒', '1239406018@qq.com', NULL, 'USER');
 
 SET FOREIGN_KEY_CHECKS = 1;
