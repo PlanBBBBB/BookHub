@@ -56,7 +56,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         book.setReservationCount(0);
         book.setStatus("1");
         book.setImage(addBookVo.getImage());
-        book.setIsDeleted("1");
+        book.setIsDeleted("0");
         int i = bookMapper.insert(book);
         adminAction(book.getBookId(), CrudOperation.INSERT);
         return i > 0;
@@ -70,10 +70,12 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Override
     public boolean delete(Integer id) {
-        adminAction(id, CrudOperation.DELETE);
         Book book = getById(id);
-        book.setIsDeleted("0");
-        return bookMapper.updateById(book) > 0;
+        if (book.getIsDeleted().equals("1")) return false;
+        book.setIsDeleted("1");
+        adminAction(id, CrudOperation.DELETE);
+        bookMapper.updateById(book);
+        return true;
     }
 
 
@@ -108,7 +110,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     @Override
     public Result borrow(Integer bookId) {
         Book book = bookMapper.selectById(bookId);
-        if (book == null || book.getIsDeleted().equals("0")) {
+        if (book == null || book.getIsDeleted().equals("1")) {
             return Result.fail(BookConstants.BOOK_NOT_EXIST);
         }
         if (book.getStatus().equals("0")) {
@@ -182,7 +184,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     public Result booking(Integer bookId) {
         // 图书被删除或不存在
         Book book = bookMapper.selectById(bookId);
-        if (book == null || book.getIsDeleted().equals("0")) {
+        if (book == null || book.getIsDeleted().equals("1")) {
             return Result.fail(BookConstants.BOOK_NOT_EXIST);
         }
         // 有库存，无需预约
@@ -231,7 +233,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
                 .like(Strings.isNotEmpty(userGetPageVo.getAuthor()), Book::getAuthor, "%" + userGetPageVo.getAuthor() + "%")
                 .like(Strings.isNotEmpty(userGetPageVo.getISBN()), Book::getISBN, "%" + userGetPageVo.getISBN() + "%")
                 .eq(Book::getStatus, "1")//有库存
-                .eq(Book::getIsDeleted, "1");//未被删除
+                .eq(Book::getIsDeleted, "0");//未被删除
         IPage<Book> page = new Page<>(userGetPageVo.getCurrentPage(), userGetPageVo.getPageSize());
         bookMapper.selectPage(page, lqw);
         List<Book> records = page.getRecords();

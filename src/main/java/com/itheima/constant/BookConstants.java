@@ -16,6 +16,6 @@ public class BookConstants {
     public static final String BOOK_MODIFIED_SUCCESS = "图书修改成功";
     public static final String BOOK_MODIFIED_FAILED = "图书修改失败";
     public static final String BOOK_DELETED_SUCCESS = "图书删除成功";
-    public static final String BOOK_DELETED_FAILED = "图书删除失败";
+    public static final String BOOK_DELETED_FAILED = "图书已删除，请勿重复操作";
 }
 

@@ -66,10 +66,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public void authorize(Integer userId) {
+    public boolean authorize(Integer userId) {
         User user = this.getById(userId);
+        if (user.getRole().equals(UserConstants.ROLE_ADMIN)) {
+            return false;
+        }
         user.setRole(UserConstants.ROLE_ADMIN);
         this.updateById(user);
+        return true;
     }
 
     @Override

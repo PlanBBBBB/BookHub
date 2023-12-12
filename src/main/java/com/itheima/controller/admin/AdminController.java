@@ -25,7 +25,8 @@ public class AdminController {
     @GetMapping("/{userId}")
     @ApiOperation("授予管理员权限")
     public Result authorize(@PathVariable("userId") Integer userId) {
-        userService.authorize(userId);
-        return Result.ok(UserConstants.AUTH_SUCCESS);
+        boolean flag = userService.authorize(userId);
+        if (flag) return Result.ok(UserConstants.AUTH_SUCCESS);
+        else return Result.fail(UserConstants.DUPLICATE_ADMIN_ROLE);
     }
 }

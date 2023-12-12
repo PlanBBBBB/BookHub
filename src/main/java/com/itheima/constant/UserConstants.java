@@ -13,4 +13,5 @@ public class UserConstants {
     public static final String LOGIN_PREFIX = "login:";
     public static final int TIME_OUT = 30;
     public static final String USER_NOT_FOUND = "用户不存在";
+    public static final String DUPLICATE_ADMIN_ROLE = "用户已经是管理员，不可重复授予管理员权限";
 }

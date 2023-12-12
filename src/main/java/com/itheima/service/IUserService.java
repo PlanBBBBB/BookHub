@@ -10,7 +10,7 @@ import com.itheima.vo.UserUpdateVo;
 public interface IUserService extends IService<User> {
     Result register(UserRegisterVo userRegisterVo);
 
-    void authorize(Integer userId);
+    boolean authorize(Integer userId);
 
     String login(UserLoginVo userLoginVo);
 
