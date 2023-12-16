@@ -227,23 +227,33 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Override
     public IPage<UserPageDto> getUserPage(UserGetPageVo userGetPageVo) {
-
         LambdaQueryWrapper<Book> lqw = new LambdaQueryWrapper<>();
         lqw.like(Strings.isNotEmpty(userGetPageVo.getTitle()), Book::getTitle, "%" + userGetPageVo.getTitle() + "%")
                 .like(Strings.isNotEmpty(userGetPageVo.getAuthor()), Book::getAuthor, "%" + userGetPageVo.getAuthor() + "%")
                 .like(Strings.isNotEmpty(userGetPageVo.getISBN()), Book::getISBN, "%" + userGetPageVo.getISBN() + "%")
-                .eq(Book::getStatus, "1")//有库存
                 .eq(Book::getIsDeleted, "0");//未被删除
         IPage<Book> page = new Page<>(userGetPageVo.getCurrentPage(), userGetPageVo.getPageSize());
         bookMapper.selectPage(page, lqw);
         List<Book> records = page.getRecords();
         List<UserPageDto> list = records.stream().map(book1 -> {
-            UserPageDto userPageVo = new UserPageDto();
-            userPageVo.setTitle(book1.getTitle());
-            userPageVo.setAuthor(book1.getAuthor());
-            userPageVo.setISBN(book1.getISBN());
-            userPageVo.setPublicationDate(book1.getPublicationDate());
-            return userPageVo;
+            UserPageDto userPageDto = new UserPageDto();
+            userPageDto.setBookId(book1.getBookId());
+            userPageDto.setTitle(book1.getTitle());
+            userPageDto.setAuthor(book1.getAuthor());
+            userPageDto.setISBN(book1.getISBN());
+            userPageDto.setPublicationDate(book1.getPublicationDate());
+            userPageDto.setStatus(book1.getStatus());
+            userPageDto.setImage(book1.getImage());
+            LambdaQueryWrapper<BorrowedBook> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(BorrowedBook::getUserId, getUserId()).eq(BorrowedBook::getBookId, book1.getBookId());
+            BorrowedBook borrowedBook = borrowBookMapper.selectOne(wrapper);
+            if (borrowedBook == null)
+                userPageDto.setIsBorrowed("0");
+            else if (borrowedBook.getReturnDate() != null)
+                userPageDto.setIsBorrowed("0");
+            else
+                userPageDto.setIsBorrowed("1");
+            return userPageDto;
         }).collect(Collectors.toList());
 
         Page<UserPageDto> userPageVoPage = new Page<>();
