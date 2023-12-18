@@ -19,7 +19,7 @@ public class NotifyController {
     @Resource
     private INotifyService notifyService;
 
-    @GetMapping
+    @PostMapping("/bookingNotice")
     @ApiOperation("预订通知")
     public Result bookingNotice() {
         Boolean flag = notifyService.bookingNotice();
@@ -28,7 +28,7 @@ public class NotifyController {
     }
 
 
-    @PutMapping
+    @PostMapping("/returnNotice")
     @ApiOperation("归还通知")
     public Result returnNotice() {
         Boolean flag = notifyService.returnNotice();
@@ -37,7 +37,7 @@ public class NotifyController {
     }
 
 
-    @PostMapping
+    @PostMapping("/overdueNotice")
     @ApiOperation("逾期通知")
     public Result overdueNotice() {
         Boolean flag = notifyService.overdueNotice();

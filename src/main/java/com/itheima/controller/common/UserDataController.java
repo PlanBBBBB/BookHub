@@ -28,7 +28,7 @@ public class UserDataController {
     }
 
 
-    @PostMapping
+    @PutMapping
     @ApiOperation("修改个人资料")
     public Result update(@RequestBody UserUpdateVo user) {
         userService.update(user);

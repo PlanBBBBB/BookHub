@@ -21,26 +21,26 @@ public class UserBookController {
     @Resource
     private IBookService bookService;
 
-    @PostMapping("/{bookId}")
+    @PostMapping("/borrow/{bookId}")
     @ApiOperation("借阅图书")
     public Result borrow(@PathVariable Integer bookId) {
         return bookService.borrow(bookId);
     }
 
-    @PutMapping("/{bookId}")
+    @PutMapping("/restore/{bookId}")
     @ApiOperation("归还图书")
     public Result restore(@PathVariable Integer bookId) {
         return bookService.restore(bookId);
     }
 
-    @GetMapping("/{bookId}")
+    @PostMapping("/booking/{bookId}")
     @ApiOperation("预订图书")
     public Result booking(@PathVariable Integer bookId) {
         return bookService.booking(bookId);
     }
 
 
-    @PostMapping("/finding")
+    @GetMapping("/finding")
     @ApiOperation("普通用户分页模糊查询")
     public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
         int currentPage = userGetPageVo.getCurrentPage();

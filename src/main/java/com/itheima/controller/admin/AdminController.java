@@ -6,10 +6,7 @@ import com.itheima.utils.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -22,7 +19,7 @@ public class AdminController {
     @Resource
     private IUserService userService;
 
-    @GetMapping("/{userId}")
+    @PutMapping("/{userId}")
     @ApiOperation("授予管理员权限")
     public Result authorize(@PathVariable("userId") Integer userId) {
         boolean flag = userService.authorize(userId);

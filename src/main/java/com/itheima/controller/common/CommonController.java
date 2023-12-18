@@ -26,7 +26,7 @@ public class CommonController {
         return userService.register(userRegisterVo);
     }
 
-    @PostMapping("/login")
+    @GetMapping("/login")
     @ApiOperation("登录")
     public Result login(@RequestBody UserLoginVo userLoginVo) {
         String jwt = userService.login(userLoginVo);

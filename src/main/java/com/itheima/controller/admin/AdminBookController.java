@@ -55,7 +55,7 @@ public class AdminBookController {
 
 
 
-    @PostMapping("/finding")
+    @GetMapping("/finding")
     @ApiOperation("管理员分页模糊查询")
     public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
         log.info(userGetPageVo.toString());
