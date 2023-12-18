@@ -40,7 +40,7 @@ public class UserBookController {
     }
 
 
-    @GetMapping("/finding")
+    @PostMapping("/finding")
     @ApiOperation("普通用户分页模糊查询")
     public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
         int currentPage = userGetPageVo.getCurrentPage();
