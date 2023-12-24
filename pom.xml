@@ -25,9 +25,8 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version> <!-- 请确保版本号与你的MySQL服务器版本兼容 -->
+            <version>8.0.33</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -47,18 +46,6 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!--阿里云短信服务-->
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-            <version>4.5.16</version>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-
         <!--lombok-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -76,7 +63,6 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.12</version>
         </dependency>
-
 
         <!--security依赖-->
         <dependency>
@@ -101,9 +87,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.33</version>
         </dependency>
-
-
-        <!--发送邮件-->
 
         <!--发送邮件-->
         <dependency>
