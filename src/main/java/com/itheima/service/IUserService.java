@@ -1,8 +1,11 @@
 package com.itheima.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.itheima.dto.UserPageDto;
 import com.itheima.entity.User;
 import com.itheima.utils.Result;
+import com.itheima.vo.AdminGetPageVo;
 import com.itheima.vo.UserLoginVo;
 import com.itheima.vo.UserRegisterVo;
 import com.itheima.vo.UserUpdateVo;
@@ -20,4 +23,5 @@ public interface IUserService extends IService<User> {
 
     void update(UserUpdateVo user);
 
+    IPage<User> getUserPage(AdminGetPageVo adminGetPageVo);
 }

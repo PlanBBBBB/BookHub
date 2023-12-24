@@ -19,14 +19,12 @@ public class UserDataController {
     @Resource
     private IUserService userService;
 
-
     @GetMapping("/check")
     @ApiOperation("查看个人资料")
     public Result check() {
         User user = userService.check();
         return Result.ok(user);
     }
-
 
     @PutMapping
     @ApiOperation("修改个人资料")

@@ -34,7 +34,6 @@ public class AdminBookController {
     }
 
 
-
     @PutMapping
     @ApiOperation("修改图书")
     public Result update(@RequestBody Book book) {
@@ -44,7 +43,6 @@ public class AdminBookController {
     }
 
 
-
     @DeleteMapping("{id}")
     @ApiOperation("删除图书")
     public Result delete(@PathVariable Integer id) {
@@ -52,7 +50,6 @@ public class AdminBookController {
         if (flag) return Result.ok(BookConstants.BOOK_DELETED_SUCCESS);
         else return Result.fail(BookConstants.BOOK_DELETED_FAILED);
     }
-
 
 
     @PostMapping("/finding")
@@ -68,5 +65,11 @@ public class AdminBookController {
             page = bookService.getAdminPage(userGetPageVo);
         }
         return Result.ok(page);
+    }
+
+    @GetMapping("/{bookId}")
+    @ApiOperation("根据id查询图书")
+    public Result findBookById(@PathVariable Long bookId) {
+        return bookService.findBookById(bookId);
     }
 }

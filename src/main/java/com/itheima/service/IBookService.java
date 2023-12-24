@@ -28,4 +28,6 @@ public interface IBookService extends IService<Book> {
 
     IPage<UserPageDto> getUserPage(UserGetPageVo userGetPageVo);
 
+    Result findBookById(Long bookId);
+
 }

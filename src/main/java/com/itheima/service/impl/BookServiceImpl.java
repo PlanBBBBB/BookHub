@@ -265,5 +265,13 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         return userPageVoPage;
     }
 
+    @Override
+    public Result findBookById(Long bookId) {
+        Book book = bookMapper.selectById(bookId);
+        if (book == null)
+            return Result.fail(BookConstants.BOOK_NOT_EXIST);
+        return Result.ok(book);
+    }
+
 
 }

@@ -2,17 +2,24 @@ package com.itheima.service.impl;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.itheima.constant.UserConstants;
 import com.itheima.dao.UserMapper;
+import com.itheima.dto.UserPageDto;
+import com.itheima.entity.Book;
+import com.itheima.entity.BorrowedBook;
 import com.itheima.security.LoginUser;
 import com.itheima.entity.User;
 import com.itheima.service.IUserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Result;
+import com.itheima.vo.AdminGetPageVo;
 import com.itheima.vo.UserLoginVo;
 import com.itheima.vo.UserRegisterVo;
 import com.itheima.vo.UserUpdateVo;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService, UserDetailsService {
@@ -38,6 +46,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Resource
     private AuthenticationManager authenticationManager;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public Result register(UserRegisterVo userRegisterVo) {
@@ -158,6 +169,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         loginUser.setUser(loginUserUser);
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         stringRedisTemplate.opsForValue().set(key, jsonStr);
+    }
+
+    @Override
+    public IPage<User> getUserPage(AdminGetPageVo adminGetPageVo) {
+        LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
+        lqw.like(Strings.isNotEmpty(adminGetPageVo.getUsername()), User::getUsername, "%" + adminGetPageVo.getUsername() + "%")
+                .like(Strings.isNotEmpty(adminGetPageVo.getName()), User::getName, "%" + adminGetPageVo.getName() + "%")
+                .like(Strings.isNotEmpty(adminGetPageVo.getEmail()), User::getEmail, "%" + adminGetPageVo.getEmail() + "%")
+                .like(Strings.isNotEmpty(adminGetPageVo.getRole()), User::getRole, "%" + adminGetPageVo.getRole() + "%");
+        IPage<User> page = new Page<>(adminGetPageVo.getCurrentPage(), adminGetPageVo.getPageSize());
+        userMapper.selectPage(page, lqw);
+        return page;
     }
 
     private Integer getUserId() {
