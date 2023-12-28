@@ -8,7 +8,7 @@
         <version>2.3.7.RELEASE</version>
     </parent>
 
-    <groupId>com.itheima</groupId>
+    <groupId>com.planb</groupId>
     <artifactId>BookHub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
