@@ -29,5 +29,11 @@ mybatis:
     reasonable: true
   mapper-locations: mapper/*.xml
 
+pagehelper:
+  helperDialect: MySQL # 设置数据库方言，具体根据你使用的数据库类型来设置
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
 BookHub:
   path: D:\BookHub\img\

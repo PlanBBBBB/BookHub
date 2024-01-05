@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.planb.dao.BorrowBookMapper">
+    <select id="selectBorrowedBook" parameterType="java.util.Map" resultType="com.planb.entity.BorrowedBook">
+        <!-- 根据bookId和userId查询借阅记录 -->
+        SELECT * FROM borrowed_book
+        WHERE book_id = #{bookId} AND user_id = #{userId}
+    </select>
+
+    <update id="updateBorrowedBook" parameterType="java.util.Map">
+        <!-- 根据recordId更新曾经的借阅记录 -->
+        UPDATE borrowed_book
+        SET return_date = NULL, borrow_date = #{borrowDate}
+        WHERE record_id = #{recordId}
+    </update>
+
+    <update id="updateById" parameterType="java.util.Map">
+        <!-- 根据recordId更新归还时间 -->
+        UPDATE borrowed_book SET return_date = #{returnDate}
+        WHERE record_id = #{recordId}
+    </update>
+
+    <insert id="insertBorrowedBook" parameterType="com.planb.entity.BorrowedBook">
+        <!-- 新增借阅记录 -->
+        INSERT INTO borrowed_book (book_id , user_id , borrow_date)
+        VALUES (#{bookId} , #{userId} , #{borrowDate})
+    </insert>
+
+    <select id="selectReturnBorrowedBooksByDate" resultType="com.planb.entity.BorrowedBook">
+        <!-- 根据条件查询借阅记录(20-30天) -->
+        SELECT * FROM borrowedbook
+        WHERE return_date IS NULL
+        AND borrow_date >= 20
+        AND borrow_date < 30
+    </select>
+
+    <select id="selectOverdueBorrowedBooksByDate" resultType="com.planb.entity.BorrowedBook">
+        <!-- 根据条件查询借阅记录(超过30天) -->
+        SELECT * FROM borrowedbook
+        WHERE return_date IS NULL
+        AND borrow_date >= 30
+    </select>
+</mapper>

@@ -69,7 +69,7 @@ public class AdminBookController {
 
     @GetMapping("/{bookId}")
     @ApiOperation("根据id查询图书")
-    public Result findBookById(@PathVariable Long bookId) {
+    public Result findBookById(@PathVariable Integer bookId) {
         return bookService.findBookById(bookId);
     }
 }

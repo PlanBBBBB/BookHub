@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.planb.dao.UserMapper">
+    <insert id="insertUser" parameterType="com.planb.entity.User">
+        <!-- 新增用户 -->
+        INSERT INTO user (name,username,password,role,email)
+        VALUES (#{name},#{username},#{password},#{role},#{email})
+    </insert>
+
+    <update id="update" parameterType="com.planb.entity.User">
+        <!-- 修改用户信息 -->
+        UPDATE user SET username = #{username},
+        password = #{password},name=#{name},email=#{email},avatar=#{avatar},role=#{role}
+    </update>
+
+    <select id="getById" parameterType="java.lang.Integer" resultType="com.planb.entity.User">
+        <!-- 根据userId查询用户 -->
+        SELECT * FROM user WHERE user_id = #{userId}
+    </select>
+
+    <select id="getUserByUsername" parameterType="java.lang.String" resultType="com.planb.entity.User">
+        <!-- 根据username查询用户 -->
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <select id="selectUsersByConditions" parameterType="java.util.Map" resultType="com.planb.entity.User">
+        <!-- 根据条件查询用户 -->
+        SELECT * FROM user
+        WHERE
+        <if test="username != null and username != ''">
+            username LIKE #{username}
+        </if>
+        <if test="name != null and name != ''">
+            AND name LIKE #{name}
+        </if>
+        <if test="email != null and email != ''">
+            AND email LIKE #{email}
+        </if>
+        <if test="role != null and role != ''">
+            AND role LIKE #{role}
+        </if>
+    </select>
+</mapper>

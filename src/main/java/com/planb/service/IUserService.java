@@ -9,7 +9,7 @@ import com.planb.vo.UserLoginVo;
 import com.planb.vo.UserRegisterVo;
 import com.planb.vo.UserUpdateVo;
 
-public interface IUserService extends IService<User> {
+public interface IUserService {
     Result register(UserRegisterVo userRegisterVo);
 
     boolean authorize(Integer userId);

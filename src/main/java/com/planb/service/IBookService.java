@@ -10,7 +10,7 @@ import com.planb.vo.AddBookVo;
 import com.planb.vo.UserGetPageVo;
 
 
-public interface IBookService extends IService<Book> {
+public interface IBookService {
 
     boolean addBook(AddBookVo book);
 
@@ -28,6 +28,6 @@ public interface IBookService extends IService<Book> {
 
     IPage<UserPageDto> getUserPage(UserGetPageVo userGetPageVo);
 
-    Result findBookById(Long bookId);
+    Result findBookById(Integer bookId);
 
 }

@@ -1,0 +1,10 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.planb.dao.NotifyMapper">
+
+    <insert id="insertNotify" parameterType="com.planb.entity.Notification">
+        <!-- 新增通知记录 -->
+        INSERT INTO notifications (notification_type,sent_date,user_id,notification_content)
+        VALUES (#{notificationType},#{sentDate},#{userId},#{notificationContent})
+    </insert>
+</mapper>
