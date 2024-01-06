@@ -1,5 +1,9 @@
 package com.planb.constant;
 
+/**
+ * @author PlanB
+ * @description 用户消息
+ */
 public class UserConstants {
     public static final String AUTH_SUCCESS = "用户授权成功";
     public static final String LOGOUT_SUCCESS = "登出成功";

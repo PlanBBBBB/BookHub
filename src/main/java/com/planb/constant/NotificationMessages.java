@@ -1,5 +1,9 @@
 package com.planb.constant;
 
+/**
+ *  @author PlanB
+ *  @description 通知消息
+ */
 public class NotificationMessages {
     public static final String BOOKING_MESSAGE = "您预订的书籍已在库，当前可进行借阅";
     public static final String RETURN_SOON_MESSAGE = "您所借阅的书籍即将到期，请按时归还";

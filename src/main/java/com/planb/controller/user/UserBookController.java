@@ -21,18 +21,36 @@ public class UserBookController {
     @Resource
     private IBookService bookService;
 
+    /**
+     * 借阅图书
+     *
+     * @param bookId
+     * @return
+     */
     @PostMapping("/borrow/{bookId}")
     @ApiOperation("借阅图书")
     public Result borrow(@PathVariable Integer bookId) {
         return bookService.borrow(bookId);
     }
 
+    /**
+     * 归还图书
+     *
+     * @param bookId
+     * @return
+     */
     @PutMapping("/restore/{bookId}")
     @ApiOperation("归还图书")
     public Result restore(@PathVariable Integer bookId) {
         return bookService.restore(bookId);
     }
 
+    /**
+     * 预订图书
+     *
+     * @param bookId
+     * @return
+     */
     @PostMapping("/booking/{bookId}")
     @ApiOperation("预订图书")
     public Result booking(@PathVariable Integer bookId) {

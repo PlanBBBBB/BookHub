@@ -5,6 +5,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
+/**
+ * 邮箱工具类
+ */
 public class MailDemoSum {
     public static void sendEmail(String recipientEmail, String subject, String content) throws Exception {
         final String from = "planbbbbb@qq.com"; // 你的QQ邮箱

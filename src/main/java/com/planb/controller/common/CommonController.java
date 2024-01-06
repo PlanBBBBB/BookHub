@@ -19,12 +19,24 @@ public class CommonController {
     @Resource
     private IUserService userService;
 
+    /**
+     * 注册
+     *
+     * @param userRegisterVo
+     * @return
+     */
     @PostMapping("/register")
     @ApiOperation("注册")
     public Result register(@RequestBody UserRegisterVo userRegisterVo) {
         return userService.register(userRegisterVo);
     }
 
+    /**
+     * 登录
+     *
+     * @param userLoginVo
+     * @return
+     */
     @PostMapping("/login")
     @ApiOperation("登录")
     public Result login(@RequestBody UserLoginVo userLoginVo) {
@@ -32,7 +44,11 @@ public class CommonController {
         return Result.ok(jwt);
     }
 
-
+    /**
+     * 登出
+     *
+     * @return
+     */
     @GetMapping("/logout")
     @ApiOperation("登出")
     public Result logout() {

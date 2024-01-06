@@ -1,6 +1,5 @@
 package com.planb.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.planb.constant.EmailTitle;
 import com.planb.constant.NotificationMessages;
 import com.planb.constant.TransactionStatus;
@@ -12,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class NotifyServiceImpl implements INotifyService {

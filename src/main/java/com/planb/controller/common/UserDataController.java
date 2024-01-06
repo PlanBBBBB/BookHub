@@ -19,6 +19,10 @@ public class UserDataController {
     @Resource
     private IUserService userService;
 
+    /**
+     * 查看个人资料
+     * @return
+     */
     @GetMapping("/check")
     @ApiOperation("查看个人资料")
     public Result check() {
@@ -26,6 +30,11 @@ public class UserDataController {
         return Result.ok(user);
     }
 
+    /**
+     * 修改个人资料
+     * @param user
+     * @return
+     */
     @PutMapping
     @ApiOperation("修改个人资料")
     public Result update(@RequestBody UserUpdateVo user) {

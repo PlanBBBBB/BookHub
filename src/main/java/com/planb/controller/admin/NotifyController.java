@@ -19,6 +19,11 @@ public class NotifyController {
     @Resource
     private INotifyService notifyService;
 
+    /**
+     * 预订通知
+     *
+     * @return
+     */
     @PostMapping("/bookingNotice")
     @ApiOperation("预订通知")
     public Result bookingNotice() {
@@ -27,7 +32,11 @@ public class NotifyController {
         else return Result.fail(NotificationMessages.RESERVATION_NOTIFICATION_FAILED);
     }
 
-
+    /**
+     * 归还通知
+     *
+     * @return
+     */
     @PostMapping("/returnNotice")
     @ApiOperation("归还通知")
     public Result returnNotice() {
@@ -36,7 +45,11 @@ public class NotifyController {
         else return Result.fail(NotificationMessages.RETURN_NOTIFICATION_FAILED);
     }
 
-
+    /**
+     * 逾期通知
+     *
+     * @return
+     */
     @PostMapping("/overdueNotice")
     @ApiOperation("逾期通知")
     public Result overdueNotice() {

@@ -22,6 +22,12 @@ public class AdminController {
     @Resource
     private IUserService userService;
 
+    /**
+     * 授予管理员权限
+     *
+     * @param userId
+     * @return
+     */
     @PutMapping("/{userId}")
     @ApiOperation("授予管理员权限")
     public Result authorize(@PathVariable("userId") Integer userId) {
@@ -30,6 +36,12 @@ public class AdminController {
         else return Result.fail(UserConstants.DUPLICATE_ADMIN_ROLE);
     }
 
+    /**
+     * 分页查询所有用户
+     *
+     * @param adminGetPageVo
+     * @return
+     */
     @PostMapping("/finding")
     @ApiOperation("分页查询所有用户")
     public Result selectAllUsers(@RequestBody AdminGetPageVo adminGetPageVo) {

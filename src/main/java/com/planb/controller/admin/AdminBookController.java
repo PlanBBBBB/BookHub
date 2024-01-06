@@ -25,6 +25,12 @@ public class AdminBookController {
     @Resource
     private IBookService bookService;
 
+    /**
+     * 新增图书
+     *
+     * @param addBookVo
+     * @return
+     */
     @PostMapping
     @ApiOperation("新增图书")
     public Result add(@RequestBody AddBookVo addBookVo) {
@@ -34,6 +40,12 @@ public class AdminBookController {
     }
 
 
+    /**
+     * 修改图书
+     *
+     * @param book
+     * @return
+     */
     @PutMapping
     @ApiOperation("修改图书")
     public Result update(@RequestBody Book book) {
@@ -42,7 +54,12 @@ public class AdminBookController {
         else return Result.fail(BookConstants.BOOK_MODIFIED_FAILED);
     }
 
-
+    /**
+     * 删除图书
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("{id}")
     @ApiOperation("删除图书")
     public Result delete(@PathVariable Integer id) {
@@ -51,7 +68,12 @@ public class AdminBookController {
         else return Result.fail(BookConstants.BOOK_DELETED_FAILED);
     }
 
-
+    /**
+     * 管理员分页模糊查询
+     *
+     * @param userGetPageVo
+     * @return
+     */
     @PostMapping("/finding")
     @ApiOperation("管理员分页模糊查询")
     public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
@@ -67,6 +89,12 @@ public class AdminBookController {
         return Result.ok(page);
     }
 
+    /**
+     * 根据id查询图书
+     *
+     * @param bookId
+     * @return
+     */
     @GetMapping("/{bookId}")
     @ApiOperation("根据id查询图书")
     public Result findBookById(@PathVariable Integer bookId) {

@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * 通用返回结果类
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

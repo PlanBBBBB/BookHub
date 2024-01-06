@@ -28,7 +28,12 @@ public class FileController {
     @Value("${BookHub.path}")
     private String basePath;
 
-
+    /**
+     * 上传文件
+     *
+     * @param file
+     * @return
+     */
     @PostMapping("/upload")
     @ApiOperation("上传文件")
     public Result upload(MultipartFile file) {

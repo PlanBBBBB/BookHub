@@ -1,5 +1,10 @@
 package com.planb.constant;
 
+/**
+ * @author PlanB
+ * @description 图书常量类
+ * @since 1.0
+ */
 public class BookConstants {
     public static final String BOOK_NOT_EXIST = "图书不存在";
     public static final String INSUFFICIENT_STOCK = "图书库存不足，无法借阅";

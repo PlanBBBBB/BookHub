@@ -1,14 +1,25 @@
 package com.planb.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.planb.entity.Notification;
-
 public interface INotifyService {
-
+    /**
+     * 归还通知
+     *
+     * @return
+     */
     Boolean returnNotice();
 
+    /**
+     * 逾期通知
+     *
+     * @return
+     */
     Boolean overdueNotice();
 
+    /**
+     * 预订通知
+     *
+     * @return
+     */
     Boolean bookingNotice();
 
 }
