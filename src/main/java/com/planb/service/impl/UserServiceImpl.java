@@ -18,6 +18,7 @@ import com.planb.vo.AdminGetPageVo;
 import com.planb.vo.UserLoginVo;
 import com.planb.vo.UserRegisterVo;
 import com.planb.vo.UserUpdateVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,6 +36,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Resource
@@ -139,6 +141,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         LoginUser loginUser = JSONUtil.toBean(loginUserJson, LoginUser.class);
         User loginUserUser = loginUser.getUser();
         User user = userMapper.getById(getUserId());
+        log.debug("{}",user.getUserId());
         if (userUpdateVo.getPassword() != null && !userUpdateVo.getPassword().isEmpty()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             String password = bCryptPasswordEncoder.encode(userUpdateVo.getPassword());

@@ -1,7 +1,5 @@
-<!-- resources/mapper/BookMapper.xml -->
-
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.planb.dao.BookMapper">
 
     <insert id="addBook" parameterType="com.planb.entity.Book">
@@ -27,19 +25,20 @@
     <select id="selectBooksByConditions" parameterType="java.util.Map" resultType="com.planb.entity.Book">
         <!-- 根据条件查询图书 -->
         SELECT * FROM book
-        WHERE
-        <if test="title != null and title != ''">
-            title LIKE #{title}
-        </if>
-        <if test="author != null and author != ''">
-            AND author LIKE #{author}
-        </if>
-        <if test="ISBN != null and ISBN != ''">
-            AND ISBN LIKE #{ISBN}
-        </if>
-        <if test="isDeleted != null">
-            AND is_deleted = #{isDeleted}
-        </if>
+        <where>
+            <if test="title != null and title != ''">
+                title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="author != null and author != ''">
+                AND author LIKE CONCAT('%', #{author}, '%')
+            </if>
+            <if test="ISBN != null and ISBN != ''">
+                AND ISBN LIKE CONCAT('%', #{ISBN}, '%')
+            </if>
+            <if test="isDeleted != null">
+                AND is_deleted = #{isDeleted}
+            </if>
+        </where>
     </select>
 </mapper>
 

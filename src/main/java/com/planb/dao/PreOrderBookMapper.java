@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 import java.util.Map;
 
-@Mapper
+
 public interface PreOrderBookMapper {
     /**
      * 根据bookId和userId查询预订记录

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.planb.entity.AdminAction;
 import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
+
 public interface AdminActionMapper {
     /**
      * 新增管理员操作记录

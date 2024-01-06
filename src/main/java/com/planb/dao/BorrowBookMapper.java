@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mapper
+
 public interface BorrowBookMapper {
     /**
      * 根据bookId和userId查询借阅记录

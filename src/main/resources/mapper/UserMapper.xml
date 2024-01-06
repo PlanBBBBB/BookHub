@@ -1,5 +1,5 @@
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.planb.dao.UserMapper">
     <insert id="insertUser" parameterType="com.planb.entity.User">
         <!-- 新增用户 -->
@@ -11,6 +11,7 @@
         <!-- 修改用户信息 -->
         UPDATE user SET username = #{username},
         password = #{password},name=#{name},email=#{email},avatar=#{avatar},role=#{role}
+        WHERE user_id = #{userId}
     </update>
 
     <select id="getById" parameterType="java.lang.Integer" resultType="com.planb.entity.User">
@@ -26,18 +27,19 @@
     <select id="selectUsersByConditions" parameterType="java.util.Map" resultType="com.planb.entity.User">
         <!-- 根据条件查询用户 -->
         SELECT * FROM user
-        WHERE
+        <where>
         <if test="username != null and username != ''">
-            username LIKE #{username}
+            username LIKE CONCAT('%', #{username}, '%')
         </if>
         <if test="name != null and name != ''">
-            AND name LIKE #{name}
+            AND name LIKE CONCAT('%', #{name}, '%')
         </if>
         <if test="email != null and email != ''">
-            AND email LIKE #{email}
+            AND email LIKE CONCAT('%', #{email}, '%')
         </if>
         <if test="role != null and role != ''">
-            AND role LIKE #{role}
+            AND role LIKE CONCAT('%', #{role}, '%')
         </if>
+        </where>
     </select>
 </mapper>
