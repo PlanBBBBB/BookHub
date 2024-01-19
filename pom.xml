@@ -106,6 +106,12 @@
             <version>3.0.3</version>
         </dependency>
 
+        <!--yml敏感信息加密工具-->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>2.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

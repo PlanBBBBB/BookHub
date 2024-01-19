@@ -6,8 +6,8 @@ spring:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://localhost:3306/bookhub?serverTimezone=UTC
-      username: root
-      password: root
+      username: ENC(ojZbEkkRbUtDdJnNkMmR0w==)
+      password: ENC(uhJgAJ4GnWNyG/LuBpXZmw==)
   redis:
     host: localhost
     port: 6379
