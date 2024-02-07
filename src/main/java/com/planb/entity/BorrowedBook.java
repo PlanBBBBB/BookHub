@@ -1,8 +1,8 @@
 package com.planb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
  * 借阅记录表
  */
 @Data
-@TableName("borrowedbook")
+@Table("borrowedbook")
 @ApiModel("借阅记录表")
 public class BorrowedBook {
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
+    @ApiModelProperty("借阅id")
     private Integer recordId;
 
     @ApiModelProperty("用户ID")

@@ -1,24 +1,22 @@
 package com.planb.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
-
+import com.mybatisflex.core.paginate.Page;
+import com.planb.dto.AddBookDto;
+import com.planb.dto.UserGetPageDto;
+import com.planb.vo.UserPageVo;
 import com.planb.entity.Book;
-import com.planb.utils.Result;
-import com.planb.dto.UserPageDto;
-import com.planb.vo.AddBookVo;
-import com.planb.vo.UserGetPageVo;
+import com.planb.vo.Result;
 
 
-public interface IBookService extends IService<Book> {
+public interface IBookService {
 
-    boolean addBook(AddBookVo book);
+    boolean addBook(AddBookDto book);
 
     boolean modify(Book book);
 
     boolean delete(Integer id);
 
-    IPage<Book> getAdminPage(UserGetPageVo userGetPageVo);
+    Page<Book> getAdminPage(UserGetPageDto userGetPageDto);
 
     Result borrow(Integer bookId);
 
@@ -26,7 +24,7 @@ public interface IBookService extends IService<Book> {
 
     Result booking(Integer bookId);
 
-    IPage<UserPageDto> getUserPage(UserGetPageVo userGetPageVo);
+    Page<UserPageVo> getUserPage(UserGetPageDto userGetPageDto);
 
     Result findBookById(Long bookId);
 

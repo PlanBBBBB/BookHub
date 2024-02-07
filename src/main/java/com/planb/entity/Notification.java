@@ -1,8 +1,8 @@
 package com.planb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
  * 通知和提醒表
  */
 @Data
-@TableName("Notifications")
+@Table("Notifications")
 @ApiModel("通知和提醒表")
 public class Notification {
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
+    @ApiModelProperty("通知id")
     private Integer notificationId;
 
     @ApiModelProperty("用户ID")

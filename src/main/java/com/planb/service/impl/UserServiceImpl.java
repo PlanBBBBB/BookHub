@@ -1,21 +1,19 @@
 package com.planb.service.impl;
 
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
 import com.planb.constant.UserConstants;
 import com.planb.dao.UserMapper;
+import com.planb.dto.UserLoginDto;
+import com.planb.dto.UserRegisterDto;
+import com.planb.dto.UserUpdateDto;
 import com.planb.security.LoginUser;
 import com.planb.entity.User;
 import com.planb.service.IUserService;
 import com.planb.utils.JwtUtil;
-import com.planb.utils.Result;
-import com.planb.vo.AdminGetPageVo;
-import com.planb.vo.UserLoginVo;
-import com.planb.vo.UserRegisterVo;
-import com.planb.vo.UserUpdateVo;
+import com.planb.vo.Result;
+import com.planb.dto.AdminGetPageDto;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,8 +32,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.planb.entity.table.UserTableDef.USER;
+
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService, UserDetailsService {
+public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -47,45 +47,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserMapper userMapper;
 
     @Override
-    public Result register(UserRegisterVo userRegisterVo) {
-        if (userRegisterVo == null || userRegisterVo.getUsername() == null || userRegisterVo.getPassword() == null) {
+    public Result register(UserRegisterDto userRegisterDto) {
+        if (userRegisterDto == null || userRegisterDto.getUsername() == null || userRegisterDto.getPassword() == null) {
             return Result.fail(UserConstants.USERNAME_OR_PASSWORD_EMPTY);
         }
         //判断用户名是否存在
-        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(User::getUsername, userRegisterVo.getUsername());
-        User u = this.getOne(wrapper);
+//        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(User::getUsername, userRegisterDto.getUsername());
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(USER.USERNAME.eq(userRegisterDto.getUsername()));
+        User u = userMapper.selectOneByQuery(queryWrapper);
+//        User u = this.getOne(wrapper);
         if (u != null) {
             return Result.fail(UserConstants.USER_ALREADY_EXISTS);
         }
         User user = new User();
-        String password = userRegisterVo.getPassword();
+        String password = userRegisterDto.getPassword();
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         password = passwordEncoder.encode(password);
-        user.setName(userRegisterVo.getName());
-        user.setUsername(userRegisterVo.getUsername());
+        user.setName(userRegisterDto.getName());
+        user.setUsername(userRegisterDto.getUsername());
         user.setPassword(password);
         user.setRole(UserConstants.ROLE_USER);
-        user.setEmail(userRegisterVo.getEmail());
+        user.setEmail(userRegisterDto.getEmail());
         //注册
-        this.save(user);
+        userMapper.insert(user);
+        //返回注册成功信息
         return Result.ok(UserConstants.REGISTRATION_SUCCESS);
     }
 
     @Override
     public boolean authorize(Integer userId) {
-        User user = this.getById(userId);
+        User user = userMapper.selectOneById(userId);
         if (user.getRole().equals(UserConstants.ROLE_ADMIN)) {
             return false;
         }
         user.setRole(UserConstants.ROLE_ADMIN);
-        this.updateById(user);
+        userMapper.update(user);
         return true;
     }
 
     @Override
-    public String login(UserLoginVo userLoginVo) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userLoginVo.getUsername(), userLoginVo.getPassword());
+    public String login(UserLoginDto userLoginDto) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userLoginDto.getUsername(), userLoginDto.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         if (Objects.isNull(authenticate)) {
             throw new RuntimeException(UserConstants.INVALID_USERNAME_OR_PASSWORD);
@@ -107,9 +112,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, username);
-        User user = getOne(queryWrapper);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.where(USER.USERNAME.eq(username));
+        User user = userMapper.selectOneByQuery(wrapper);
         if (user == null) {
             throw new RuntimeException(UserConstants.USER_NOT_FOUND);
         }
@@ -137,45 +142,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public void update(UserUpdateVo userUpdateVo) {
+    public void update(UserUpdateDto userUpdateDto) {
         String key = UserConstants.LOGIN_PREFIX + getUserId();
         String loginUserJson = stringRedisTemplate.opsForValue().get(key);
         LoginUser loginUser = JSONUtil.toBean(loginUserJson, LoginUser.class);
         User loginUserUser = loginUser.getUser();
-        User user = getById(getUserId());
-        if (userUpdateVo.getPassword() != null && !userUpdateVo.getPassword().isEmpty()) {
+        User user = userMapper.selectOneById(getUserId());
+        if (userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().isEmpty()) {
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            String password = bCryptPasswordEncoder.encode(userUpdateVo.getPassword());
+            String password = bCryptPasswordEncoder.encode(userUpdateDto.getPassword());
             user.setPassword(password);
             loginUserUser.setPassword(password);
         }
-        if (userUpdateVo.getName() != null && !userUpdateVo.getName().isEmpty()) {
-            user.setName(userUpdateVo.getName());
-            loginUserUser.setName(userUpdateVo.getName());
+        if (userUpdateDto.getName() != null && !userUpdateDto.getName().isEmpty()) {
+            user.setName(userUpdateDto.getName());
+            loginUserUser.setName(userUpdateDto.getName());
         }
-        if (userUpdateVo.getEmail() != null && !userUpdateVo.getEmail().isEmpty()) {
-            user.setEmail(userUpdateVo.getEmail());
-            loginUserUser.setEmail(userUpdateVo.getEmail());
+        if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().isEmpty()) {
+            user.setEmail(userUpdateDto.getEmail());
+            loginUserUser.setEmail(userUpdateDto.getEmail());
         }
-        if (userUpdateVo.getAvatar() != null && !userUpdateVo.getAvatar().isEmpty()) {
-            user.setAvatar(userUpdateVo.getAvatar());
-            loginUserUser.setAvatar(userUpdateVo.getAvatar());
+        if (userUpdateDto.getAvatar() != null && !userUpdateDto.getAvatar().isEmpty()) {
+            user.setAvatar(userUpdateDto.getAvatar());
+            loginUserUser.setAvatar(userUpdateDto.getAvatar());
         }
-        updateById(user);
+        userMapper.update(user);
         loginUser.setUser(loginUserUser);
         String jsonStr = JSONUtil.toJsonStr(loginUser);
         stringRedisTemplate.opsForValue().set(key, jsonStr);
     }
 
     @Override
-    public IPage<User> getUserPage(AdminGetPageVo adminGetPageVo) {
-        LambdaQueryWrapper<User> lqw = new LambdaQueryWrapper<>();
-        lqw.like(Strings.isNotEmpty(adminGetPageVo.getUsername()), User::getUsername, "%" + adminGetPageVo.getUsername() + "%")
-                .like(Strings.isNotEmpty(adminGetPageVo.getName()), User::getName, "%" + adminGetPageVo.getName() + "%")
-                .like(Strings.isNotEmpty(adminGetPageVo.getEmail()), User::getEmail, "%" + adminGetPageVo.getEmail() + "%")
-                .like(Strings.isNotEmpty(adminGetPageVo.getRole()), User::getRole, "%" + adminGetPageVo.getRole() + "%");
-        IPage<User> page = new Page<>(adminGetPageVo.getCurrentPage(), adminGetPageVo.getPageSize());
-        userMapper.selectPage(page, lqw);
+    public Page<User> getUserPage(AdminGetPageDto adminGetPageVo) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(USER.USERNAME.like(adminGetPageVo.getUsername(),Strings.isNotEmpty(adminGetPageVo.getUsername())))
+                .where(USER.NAME.like(adminGetPageVo.getName(),Strings.isNotEmpty(adminGetPageVo.getName())))
+                .where(USER.EMAIL.like(adminGetPageVo.getEmail(),Strings.isNotEmpty(adminGetPageVo.getEmail())))
+                .where(USER.ROLE.like(adminGetPageVo.getRole(),Strings.isNotEmpty(adminGetPageVo.getRole())));
+        Page<User> page = userMapper.paginate(adminGetPageVo.getCurrentPage(), adminGetPageVo.getPageSize(), queryWrapper);
         return page;
     }
 

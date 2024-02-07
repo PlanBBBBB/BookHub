@@ -2,7 +2,7 @@ package com.planb.controller.admin;
 
 import com.planb.constant.NotificationMessages;
 import com.planb.service.INotifyService;
-import com.planb.utils.Result;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;

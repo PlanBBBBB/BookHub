@@ -1,26 +1,25 @@
 package com.planb.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.mybatisflex.core.paginate.Page;
+import com.planb.dto.UserLoginDto;
+import com.planb.dto.UserRegisterDto;
+import com.planb.dto.UserUpdateDto;
 import com.planb.entity.User;
-import com.planb.utils.Result;
-import com.planb.vo.AdminGetPageVo;
-import com.planb.vo.UserLoginVo;
-import com.planb.vo.UserRegisterVo;
-import com.planb.vo.UserUpdateVo;
+import com.planb.vo.Result;
+import com.planb.dto.AdminGetPageDto;
 
-public interface IUserService extends IService<User> {
-    Result register(UserRegisterVo userRegisterVo);
+public interface IUserService {
+    Result register(UserRegisterDto userRegisterVo);
 
     boolean authorize(Integer userId);
 
-    String login(UserLoginVo userLoginVo);
+    String login(UserLoginDto userLoginVo);
 
     void logout();
 
     User check();
 
-    void update(UserUpdateVo user);
+    void update(UserUpdateDto user);
 
-    IPage<User> getUserPage(AdminGetPageVo adminGetPageVo);
+    Page<User> getUserPage(AdminGetPageDto adminGetPageVo);
 }

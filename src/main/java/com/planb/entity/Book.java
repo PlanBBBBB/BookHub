@@ -1,9 +1,9 @@
 package com.planb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,10 +14,11 @@ import java.time.LocalDateTime;
  * 图书表
  */
 @Data
-@TableName("book")
+@Table("book")
 @ApiModel("图书表")
 public class Book {
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
+    @ApiModelProperty("图书id")
     private Integer bookId;
 
     @ApiModelProperty("标题")
@@ -26,7 +27,7 @@ public class Book {
     @ApiModelProperty("作者")
     private String author;
 
-    @TableField(value = "ISBN")
+    @Column(value = "ISBN")
     @ApiModelProperty("ISBN号")
     private String ISBN;
 

@@ -1,7 +1,7 @@
 package com.planb.hander;
 
 import cn.hutool.json.JSONUtil;
-import com.planb.utils.Result;
+import com.planb.vo.Result;
 import com.planb.utils.WebUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

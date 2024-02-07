@@ -1,23 +1,22 @@
 package com.planb.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryChain;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
 import com.planb.constant.CrudOperation;
 import com.planb.constant.BookConstants;
 import com.planb.dao.AdminActionMapper;
 import com.planb.dao.BookMapper;
 import com.planb.dao.BorrowBookMapper;
 import com.planb.dao.PreOderBookMapper;
+import com.planb.dto.AddBookDto;
+import com.planb.dto.UserGetPageDto;
 import com.planb.entity.*;
 import com.planb.security.LoginUser;
 import com.planb.service.IBookService;
-import com.planb.utils.Result;
-import com.planb.dto.UserPageDto;
-import com.planb.vo.AddBookVo;
-import com.planb.vo.UserGetPageVo;
+import com.planb.vo.Result;
+import com.planb.vo.UserPageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.security.core.Authentication;
@@ -29,9 +28,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.planb.entity.table.BookTableDef.BOOK;
+import static com.planb.entity.table.BorrowedBookTableDef.BORROWED_BOOK;
+import static com.planb.entity.table.PreOrderBookTableDef.PRE_ORDER_BOOK;
+
 @Service
 @Slf4j
-public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IBookService {
+public class BookServiceImpl implements IBookService {
 
     @Resource
     private BookMapper bookMapper;
@@ -46,16 +49,16 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     private PreOderBookMapper preOderBookMapper;
 
     @Override
-    public boolean addBook(AddBookVo addBookVo) {
+    public boolean addBook(AddBookDto addBookDto) {
         Book book = new Book();
-        book.setISBN(addBookVo.getISBN());
-        book.setAuthor(addBookVo.getAuthor());
-        book.setTitle(addBookVo.getTitle());
-        book.setPublicationDate(addBookVo.getPublicationDate());
-        book.setStock(addBookVo.getStock());
+        book.setISBN(addBookDto.getISBN());
+        book.setAuthor(addBookDto.getAuthor());
+        book.setTitle(addBookDto.getTitle());
+        book.setPublicationDate(addBookDto.getPublicationDate());
+        book.setStock(addBookDto.getStock());
         book.setReservationCount(0);
         book.setStatus("1");
-        book.setImage(addBookVo.getImage());
+        book.setImage(addBookDto.getImage());
         book.setIsDeleted("0");
         int i = bookMapper.insert(book);
         adminAction(book.getBookId(), CrudOperation.INSERT);
@@ -65,16 +68,16 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     @Override
     public boolean modify(Book book) {
         adminAction(book.getBookId(), CrudOperation.UPDATE);
-        return bookMapper.updateById(book) > 0;
+        return bookMapper.update(book) > 0;
     }
 
     @Override
     public boolean delete(Integer id) {
-        Book book = getById(id);
+        Book book = bookMapper.selectOneById(id);
         if (book.getIsDeleted().equals("1")) return false;
         book.setIsDeleted("1");
         adminAction(id, CrudOperation.DELETE);
-        bookMapper.updateById(book);
+        bookMapper.update(book);
         return true;
     }
 
@@ -96,20 +99,19 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     }
 
     @Override
-    public IPage<Book> getAdminPage(UserGetPageVo userGetPageVo) {
-        LambdaQueryWrapper<Book> lqw = new LambdaQueryWrapper<>();
-        lqw.like(Strings.isNotEmpty(userGetPageVo.getTitle()), Book::getTitle, "%" + userGetPageVo.getTitle() + "%")
-                .like(Strings.isNotEmpty(userGetPageVo.getAuthor()), Book::getAuthor, "%" + userGetPageVo.getAuthor() + "%")
-                .like(Strings.isNotEmpty(userGetPageVo.getISBN()), Book::getISBN, "%" + userGetPageVo.getISBN() + "%");
-        IPage<Book> page = new Page<>(userGetPageVo.getCurrentPage(), userGetPageVo.getPageSize());
-        bookMapper.selectPage(page, lqw);
+    public Page<Book> getAdminPage(UserGetPageDto userGetPageDto) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(BOOK.TITLE.like(userGetPageDto.getTitle(),Strings.isNotEmpty(userGetPageDto.getTitle())))
+                .where(BOOK.AUTHOR.like(userGetPageDto.getAuthor(),Strings.isNotEmpty(userGetPageDto.getAuthor())))
+                .where(BOOK.I_S_B_N.like(userGetPageDto.getISBN(),Strings.isNotEmpty(userGetPageDto.getISBN())));
+        Page<Book> page = bookMapper.paginate(userGetPageDto.getCurrentPage(), userGetPageDto.getPageSize(), queryWrapper);
         return page;
     }
 
 
     @Override
     public Result borrow(Integer bookId) {
-        Book book = bookMapper.selectById(bookId);
+        Book book = bookMapper.selectOneById(bookId);
         if (book == null || book.getIsDeleted().equals("1")) {
             return Result.fail(BookConstants.BOOK_NOT_EXIST);
         }
@@ -118,9 +120,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         }
 
         // 已经借阅
-        LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BorrowedBook::getBookId, bookId).eq(BorrowedBook::getUserId, getUserId());
-        BorrowedBook borrowedBook = borrowBookMapper.selectOne(queryWrapper);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(BORROWED_BOOK.BOOK_ID.eq(bookId)).where(BORROWED_BOOK.USER_ID.eq(getUserId()));
+        BorrowedBook borrowedBook = borrowBookMapper.selectOneByQuery(queryWrapper);
         if (borrowedBook != null && borrowedBook.getBorrowDate() != null && borrowedBook.getReturnDate() == null) {
             return Result.fail(BookConstants.ALREADY_BORROWED);
         }
@@ -128,11 +130,11 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         // 曾经借阅
         if (borrowedBook != null && borrowedBook.getBorrowDate() != null && borrowedBook.getReturnDate() != null) {
 
-            UpdateWrapper<BorrowedBook> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.set("return_date", null); // 设置returnDate为null
-            updateWrapper.eq("record_id", borrowedBook.getRecordId()); // 指定更新条件
-            updateWrapper.set("borrow_date", LocalDateTime.now());
-            borrowBookMapper.update(null, updateWrapper);
+            UpdateChain.of(BorrowedBook.class)
+                    .set(BORROWED_BOOK.RETURN_DATE,null)
+                    .set(BORROWED_BOOK.BORROW_DATE,LocalDateTime.now())
+                    .where(BORROWED_BOOK.RECORD_ID.eq(borrowedBook.getRecordId()))
+                    .update();
         }
 
         // 未曾借阅，覆盖以前的借阅记录
@@ -148,12 +150,16 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         stock--;
         if (stock <= 0) book.setStatus("0");
         book.setStock(stock);
-        bookMapper.updateById(book);
+        bookMapper.update(book);
 
         // 删除预约记录，如果有的话
-        LambdaQueryWrapper<PreOrderBook> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PreOrderBook::getBookId, bookId).eq(PreOrderBook::getUserId, getUserId());
-        PreOrderBook preOrderBook = preOderBookMapper.selectOne(wrapper);
+        PreOrderBook preOrderBook = QueryChain.of(preOderBookMapper)
+                .select(PRE_ORDER_BOOK.ALL_COLUMNS)
+                .from(PRE_ORDER_BOOK)
+                .where(PRE_ORDER_BOOK.BOOK_ID.eq(bookId))
+                .where(PRE_ORDER_BOOK.USER_ID.eq(getUserId()))
+                .one();
+
         if (preOrderBook != null) {
             preOderBookMapper.deleteById(preOrderBook.getRecordId());
         }
@@ -163,27 +169,27 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
 
     @Override
     public Result restore(Integer bookId) {
-        LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BorrowedBook::getBookId, bookId).eq(BorrowedBook::getUserId, getUserId());
-        BorrowedBook borrowedBook = borrowBookMapper.selectOne(queryWrapper);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(BORROWED_BOOK.BOOK_ID.eq(bookId)).where(BORROWED_BOOK.USER_ID.eq(getUserId()));
+        BorrowedBook borrowedBook = borrowBookMapper.selectOneByQuery(queryWrapper);
         if (borrowedBook == null || borrowedBook.getReturnDate() != null) {
             return Result.fail(BookConstants.NOT_YET_BORROWED);
         }
         borrowedBook.setReturnDate(LocalDateTime.now());
-        borrowBookMapper.updateById(borrowedBook);
-        Book book = bookMapper.selectById(bookId);
+        borrowBookMapper.update(borrowedBook);
+        Book book = bookMapper.selectOneById(bookId);
         Integer stock = book.getStock();
         stock++;
         book.setStock(stock);
         book.setStatus("1");
-        bookMapper.updateById(book);
+        bookMapper.update(book);
         return Result.ok(BookConstants.RETURN_SUCCESS);
     }
 
     @Override
     public Result booking(Integer bookId) {
         // 图书被删除或不存在
-        Book book = bookMapper.selectById(bookId);
+        Book book = bookMapper.selectOneById(bookId);
         if (book == null || book.getIsDeleted().equals("1")) {
             return Result.fail(BookConstants.BOOK_NOT_EXIST);
         }
@@ -193,17 +199,17 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         }
 
         // 已借阅，未归还
-        LambdaQueryWrapper<BorrowedBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BorrowedBook::getBookId, bookId).eq(BorrowedBook::getUserId, getUserId());
-        BorrowedBook borrowedBook = borrowBookMapper.selectOne(queryWrapper);
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(BORROWED_BOOK.BOOK_ID.eq(bookId)).where(BORROWED_BOOK.USER_ID.eq(getUserId()));
+        BorrowedBook borrowedBook = borrowBookMapper.selectOneByQuery(queryWrapper);
         if (borrowedBook != null && borrowedBook.getReturnDate() == null) {
             return Result.fail(BookConstants.ALREADY_BORROWED_RETURN_FIRST);
         }
 
         // 已经预订
-        LambdaQueryWrapper<PreOrderBook> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(PreOrderBook::getBookId, bookId).eq(PreOrderBook::getUserId, getUserId());
-        PreOrderBook preOrderBook = preOderBookMapper.selectOne(wrapper);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.where(PRE_ORDER_BOOK.BOOK_ID.eq(bookId)).where(PRE_ORDER_BOOK.USER_ID.eq(getUserId()));
+        PreOrderBook preOrderBook = preOderBookMapper.selectOneByQuery(wrapper);
         if (preOrderBook != null) {
             return Result.fail(BookConstants.ALREADY_RESERVED);
         }
@@ -213,7 +219,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
         Integer reservationCount = book.getReservationCount();
         reservationCount++;
         book.setReservationCount(reservationCount);
-        bookMapper.updateById(book);
+        bookMapper.update(book);
 
         //添加预订记录
         preOrderBook = new PreOrderBook();
@@ -226,48 +232,49 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements IB
     }
 
     @Override
-    public IPage<UserPageDto> getUserPage(UserGetPageVo userGetPageVo) {
-        LambdaQueryWrapper<Book> lqw = new LambdaQueryWrapper<>();
-        lqw.like(Strings.isNotEmpty(userGetPageVo.getTitle()), Book::getTitle, "%" + userGetPageVo.getTitle() + "%")
-                .like(Strings.isNotEmpty(userGetPageVo.getAuthor()), Book::getAuthor, "%" + userGetPageVo.getAuthor() + "%")
-                .like(Strings.isNotEmpty(userGetPageVo.getISBN()), Book::getISBN, "%" + userGetPageVo.getISBN() + "%")
-                .eq(Book::getIsDeleted, "0");//未被删除
-        IPage<Book> page = new Page<>(userGetPageVo.getCurrentPage(), userGetPageVo.getPageSize());
-        bookMapper.selectPage(page, lqw);
+    public Page<UserPageVo> getUserPage(UserGetPageDto userGetPageDto) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(BOOK.TITLE.like(userGetPageDto.getTitle(),Strings.isNotEmpty(userGetPageDto.getTitle())))
+                .where(BOOK.AUTHOR.like(userGetPageDto.getAuthor(),Strings.isNotEmpty(userGetPageDto.getAuthor())))
+                .where(BOOK.I_S_B_N.like(userGetPageDto.getISBN(),Strings.isNotEmpty(userGetPageDto.getISBN())))
+                .where(BOOK.IS_DELETED.eq("0"));//未被删除
+        Page<Book> page = bookMapper.paginate(userGetPageDto.getCurrentPage(), userGetPageDto.getPageSize(), queryWrapper);
+
         List<Book> records = page.getRecords();
-        List<UserPageDto> list = records.stream().map(book1 -> {
-            UserPageDto userPageDto = new UserPageDto();
-            userPageDto.setBookId(book1.getBookId());
-            userPageDto.setTitle(book1.getTitle());
-            userPageDto.setAuthor(book1.getAuthor());
-            userPageDto.setISBN(book1.getISBN());
-            userPageDto.setPublicationDate(book1.getPublicationDate());
-            userPageDto.setStatus(book1.getStatus());
-            userPageDto.setImage(book1.getImage());
-            LambdaQueryWrapper<BorrowedBook> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(BorrowedBook::getUserId, getUserId()).eq(BorrowedBook::getBookId, book1.getBookId());
-            BorrowedBook borrowedBook = borrowBookMapper.selectOne(wrapper);
+        List<UserPageVo> list = records.stream().map(book1 -> {
+            UserPageVo userPageVo = new UserPageVo();
+            userPageVo.setBookId(book1.getBookId());
+            userPageVo.setTitle(book1.getTitle());
+            userPageVo.setAuthor(book1.getAuthor());
+            userPageVo.setISBN(book1.getISBN());
+            userPageVo.setPublicationDate(book1.getPublicationDate());
+            userPageVo.setStatus(book1.getStatus());
+            userPageVo.setImage(book1.getImage());
+            QueryWrapper queryWrapper1 = new QueryWrapper();
+            queryWrapper1.where(BORROWED_BOOK.USER_ID.eq(getUserId()))
+                    .where(BORROWED_BOOK.BOOK_ID.eq(book1.getBookId()));
+            BorrowedBook borrowedBook = borrowBookMapper.selectOneByQuery(queryWrapper1);
             if (borrowedBook == null)
-                userPageDto.setIsBorrowed("0");
+                userPageVo.setIsBorrowed("0");
             else if (borrowedBook.getReturnDate() != null)
-                userPageDto.setIsBorrowed("0");
+                userPageVo.setIsBorrowed("0");
             else
-                userPageDto.setIsBorrowed("1");
-            return userPageDto;
+                userPageVo.setIsBorrowed("1");
+            return userPageVo;
         }).collect(Collectors.toList());
 
-        Page<UserPageDto> userPageVoPage = new Page<>();
-        userPageVoPage.setPages(page.getPages());
-        userPageVoPage.setCurrent(page.getCurrent());
-        userPageVoPage.setSize(page.getSize());
-        userPageVoPage.setTotal(page.getTotal());
+        Page<UserPageVo> userPageVoPage = new Page<>();
+        userPageVoPage.setPageNumber(page.getPageNumber());
+        userPageVoPage.setPageSize(page.getPageSize());
+        userPageVoPage.setTotalPage(page.getTotalPage());
+        userPageVoPage.setTotalRow(page.getTotalRow());
         userPageVoPage.setRecords(list);
         return userPageVoPage;
     }
 
     @Override
     public Result findBookById(Long bookId) {
-        Book book = bookMapper.selectById(bookId);
+        Book book = bookMapper.selectOneById(bookId);
         if (book == null)
             return Result.fail(BookConstants.BOOK_NOT_EXIST);
         return Result.ok(book);

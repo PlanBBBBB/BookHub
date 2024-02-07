@@ -1,10 +1,10 @@
 package com.planb.controller.user;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mybatisflex.core.paginate.Page;
+import com.planb.dto.UserGetPageDto;
+import com.planb.vo.UserPageVo;
 import com.planb.service.IBookService;
-import com.planb.utils.Result;
-import com.planb.dto.UserPageDto;
-import com.planb.vo.UserGetPageVo;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,13 +42,13 @@ public class UserBookController {
 
     @PostMapping("/finding")
     @ApiOperation("普通用户分页模糊查询")
-    public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
-        int currentPage = userGetPageVo.getCurrentPage();
-        IPage<UserPageDto> page = bookService.getUserPage(userGetPageVo);
+    public Result findBook(@RequestBody UserGetPageDto userGetPageDto) {
+        int currentPage = userGetPageDto.getCurrentPage();
+        Page<UserPageVo> page = bookService.getUserPage(userGetPageDto);
         //如果当前页码值大于总页码值，那么重新执行查询操作，使用最大页码值作为当前页码值
-        if (currentPage > page.getPages()) {
-            userGetPageVo.setCurrentPage((int) page.getPages());
-            page = bookService.getUserPage(userGetPageVo);
+        if (currentPage > page.getTotalPage()) {
+            userGetPageDto.setCurrentPage((int) page.getTotalPage());
+            page = bookService.getUserPage(userGetPageDto);
         }
         return Result.ok(page);
     }

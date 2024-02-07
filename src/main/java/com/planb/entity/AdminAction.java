@@ -1,8 +1,8 @@
 package com.planb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
  * 图书管理员操作记录表
  */
 @Data
-@TableName("adminactions")
+@Table("adminactions")
 @ApiModel("图书管理员操作记录")
 public class AdminAction {
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
+    @ApiModelProperty("操作id")
     private Integer recordId;
 
     @ApiModelProperty("操作类型")

@@ -28,10 +28,17 @@
             <version>8.0.33</version>
         </dependency>
 
+        <!--  mybatis-flex -->
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.3</version>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-spring-boot-starter</artifactId>
+            <version>1.7.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybatis-flex</groupId>
+            <artifactId>mybatis-flex-processor</artifactId>
+            <version>1.5.5</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -56,12 +63,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.2.12</version>
         </dependency>
 
         <!--security依赖-->

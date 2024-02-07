@@ -1,8 +1,8 @@
 package com.planb.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.KeyType;
+import com.mybatisflex.annotation.Table;
 import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,10 +11,11 @@ import io.swagger.annotations.ApiModelProperty;
  * 用户表
  */
 @Data
-@TableName("user")
+@Table("user")
 @ApiModel("用户表")
 public class User {
-    @TableId(type = IdType.AUTO)
+    @Id(keyType = KeyType.Auto)
+    @ApiModelProperty("用户id")
     private Integer userId;
 
     @ApiModelProperty("用户名")

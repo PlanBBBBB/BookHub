@@ -1,10 +1,10 @@
 package com.planb.controller.common;
 
 import com.planb.constant.UserConstants;
+import com.planb.dto.UserUpdateDto;
 import com.planb.entity.User;
 import com.planb.service.IUserService;
-import com.planb.utils.Result;
-import com.planb.vo.UserUpdateVo;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +28,7 @@ public class UserDataController {
 
     @PutMapping
     @ApiOperation("修改个人资料")
-    public Result update(@RequestBody UserUpdateVo user) {
+    public Result update(@RequestBody UserUpdateDto user) {
         userService.update(user);
         return Result.ok(UserConstants.UPDATE_PROFILE_SUCCESS);
     }

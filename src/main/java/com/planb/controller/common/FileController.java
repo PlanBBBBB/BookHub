@@ -1,6 +1,6 @@
 package com.planb.controller.common;
 
-import com.planb.utils.Result;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

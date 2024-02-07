@@ -1,4 +1,4 @@
-package com.planb.utils;
+package com.planb.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

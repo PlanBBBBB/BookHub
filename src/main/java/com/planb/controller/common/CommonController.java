@@ -1,10 +1,10 @@
 package com.planb.controller.common;
 
 import com.planb.constant.UserConstants;
+import com.planb.dto.UserLoginDto;
+import com.planb.dto.UserRegisterDto;
 import com.planb.service.IUserService;
-import com.planb.utils.Result;
-import com.planb.vo.UserLoginVo;
-import com.planb.vo.UserRegisterVo;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +21,14 @@ public class CommonController {
 
     @PostMapping("/register")
     @ApiOperation("注册")
-    public Result register(@RequestBody UserRegisterVo userRegisterVo) {
-        return userService.register(userRegisterVo);
+    public Result register(@RequestBody UserRegisterDto userRegisterDto) {
+        return userService.register(userRegisterDto);
     }
 
     @PostMapping("/login")
     @ApiOperation("登录")
-    public Result login(@RequestBody UserLoginVo userLoginVo) {
-        String jwt = userService.login(userLoginVo);
+    public Result login(@RequestBody UserLoginDto userLoginDto) {
+        String jwt = userService.login(userLoginDto);
         return Result.ok(jwt);
     }
 

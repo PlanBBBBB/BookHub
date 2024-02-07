@@ -1,11 +1,11 @@
 package com.planb.controller.admin;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mybatisflex.core.paginate.Page;
 import com.planb.constant.UserConstants;
 import com.planb.entity.User;
 import com.planb.service.IUserService;
-import com.planb.utils.Result;
-import com.planb.vo.AdminGetPageVo;
+import com.planb.vo.Result;
+import com.planb.dto.AdminGetPageDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,12 +32,12 @@ public class AdminController {
 
     @PostMapping("/finding")
     @ApiOperation("分页查询所有用户")
-    public Result selectAllUsers(@RequestBody AdminGetPageVo adminGetPageVo) {
+    public Result selectAllUsers(@RequestBody AdminGetPageDto adminGetPageVo) {
         int currentPage = adminGetPageVo.getCurrentPage();
-        IPage<User> page = userService.getUserPage(adminGetPageVo);
+        Page<User> page = userService.getUserPage(adminGetPageVo);
         //如果当前页码值大于总页码值，那么重新执行查询操作，使用最大页码值作为当前页码值
-        if (currentPage > page.getPages()) {
-            adminGetPageVo.setCurrentPage((int) page.getPages());
+        if (currentPage > page.getTotalPage()) {
+            adminGetPageVo.setCurrentPage((int) page.getTotalPage());
             page = userService.getUserPage(adminGetPageVo);
         }
         return Result.ok(page);

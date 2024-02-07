@@ -1,12 +1,12 @@
 package com.planb.controller.admin;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mybatisflex.core.paginate.Page;
 import com.planb.constant.BookConstants;
+import com.planb.dto.AddBookDto;
+import com.planb.dto.UserGetPageDto;
 import com.planb.entity.Book;
 import com.planb.service.IBookService;
-import com.planb.utils.Result;
-import com.planb.vo.AddBookVo;
-import com.planb.vo.UserGetPageVo;
+import com.planb.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +27,8 @@ public class AdminBookController {
 
     @PostMapping
     @ApiOperation("新增图书")
-    public Result add(@RequestBody AddBookVo addBookVo) {
-        boolean flag = bookService.addBook(addBookVo);
+    public Result add(@RequestBody AddBookDto addBookDto) {
+        boolean flag = bookService.addBook(addBookDto);
         if (flag) return Result.ok(BookConstants.BOOK_ADDED_SUCCESS);
         else return Result.fail(BookConstants.BOOK_ADDED_FAILED);
     }
@@ -54,15 +54,14 @@ public class AdminBookController {
 
     @PostMapping("/finding")
     @ApiOperation("管理员分页模糊查询")
-    public Result findBook(@RequestBody UserGetPageVo userGetPageVo) {
-        log.info(userGetPageVo.toString());
-
-        int currentPage = userGetPageVo.getCurrentPage();
-        IPage<Book> page = bookService.getAdminPage(userGetPageVo);
+    public Result findBook(@RequestBody UserGetPageDto userGetPageDto) {
+        log.info(userGetPageDto.toString());
+        int currentPage = userGetPageDto.getCurrentPage();
+        Page<Book> page = bookService.getAdminPage(userGetPageDto);
         //如果当前页码值大于总页码值，那么重新执行查询操作，使用最大页码值作为当前页码值
-        if (currentPage > page.getPages()) {
-            userGetPageVo.setCurrentPage((int) page.getPages());
-            page = bookService.getAdminPage(userGetPageVo);
+        if (currentPage > page.getTotalPage()) {
+            userGetPageDto.setCurrentPage((int) page.getTotalPage());
+            page = bookService.getAdminPage(userGetPageDto);
         }
         return Result.ok(page);
     }

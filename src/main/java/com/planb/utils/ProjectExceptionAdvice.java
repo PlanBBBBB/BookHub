@@ -1,5 +1,6 @@
 package com.planb.utils;
 
+import com.planb.vo.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
